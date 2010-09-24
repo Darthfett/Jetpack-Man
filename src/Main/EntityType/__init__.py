@@ -27,13 +27,9 @@ class EntityType:
         #    separate multiple images with a ','.
         dir = os.path.abspath(os.path.join(os.getcwd(), 'EntityType'))
         #dir = os.getcwd()
-        print os.getcwd()
-        print dir
-        print os.listdir(dir)
         os.chdir(dir)
         dir = os.getcwd()
         for entityTypeName in os.listdir(dir):
-            print entityTypeName, os.path.isdir(entityTypeName)
             if (not os.path.isdir(entityTypeName)):
                 continue
             entityType = None
@@ -55,14 +51,13 @@ class EntityType:
                 if (key == 'idle'):
                     print 'entity type definition:', entityTypeName
                     entityType = EntityType(entityTypeName, animation)
+
                 else:
                     animations.append(animation)
                     keys.append(key)
-                    values = values.pop(0).split(',')
-                    #print 'values:'
-                    for val in values:
-                        val = val.strip()
-                        #print val
-                        animation.add(os.path.join(entityTypeName, val))
+                values = values.pop(0).split(',')
+                for val in values:
+                    val = val.strip()
+                    animation.add(os.path.join(entityTypeName, val))
             for animation in animations:
                     entityType.addAnimation(keys.pop(0), animation)

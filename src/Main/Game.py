@@ -22,7 +22,7 @@ class Game:
     PlayerHorizontalMoveSpeed = 12
 
     #Physics
-    Gravity = (0, 4)
+    Gravity = 4
 
     PlayerMaxJumpLength = 16
     PlayerMaxFlyLength = 16
@@ -31,26 +31,18 @@ class Game:
         Game.Screen.fill((0, 0, 0))
         for entity in Entity.Entities:
             Game.Screen.blit(entity.getNextFrame(), entity.position)
-            i += 1
 
     def nextFrame(self):
         for entity in Entity.Entities:
-            print 'DEBUG: Entities'
-            print entity.entityType
-            print entity.entityType.animations
-            print entity.entityType.animations['idle']
-            print entity.currentAnimation
-            print entity.currentAnimationFrame
-            print entity.currentFrame
-            entity.position += entity.velocity
-            entity.velocity += entity.acceleration
+            entity.position = [entity.position[i] + entity.velocity[i] for i in entity.position]
+            entity.velocity = [entity.velocity[i] + entity.acceleration[i] for i in entity.position]
             if (entity.falling):
-                entity.velocity += Game.Gravity
+                entity.velocity[1] += Game.Gravity
             if (entity.flying):
                 entity.flyCounter -= 2
             if (entity.flyCounter <= 0):
                 if (entity.flying):
-                    entity.acceleration += (0, 6)
+                    entity.acceleration[1] += 6
                 entity.flying = False
             if (entity.jumping):
                 entity.jumpcounter += 2
@@ -99,7 +91,6 @@ class Game:
         deltaFrameTime = 1000 / Game.FPSLimit
 #        try:
         while True:
-            print '.'
             # Event Polling
             event = pygame.event.poll()
 #                while event:
@@ -123,7 +114,6 @@ class Game:
                 nextFrameTime = currentTime + deltaFrameTime
 
             pygame.time.delay(1)
-            print ','
 #        except Exception as inst:
 #            print 'Exception:'
 #            print '\t', type(inst)
@@ -143,7 +133,6 @@ class Game:
         EntityType.initializeEntityTypes()
         Game.Player = Entity(EntityType.EntityTypes['player'])
         Game.Player.flipped = False
-        print "\tDEBUG: Finished Initializing Entities"
 
     def initScreen(self):
         print "DEBUG: Initializing Screen"

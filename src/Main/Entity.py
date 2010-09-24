@@ -39,14 +39,14 @@ class Entity:
         Entity.Entities.append(self)
         self.flipped = True
 
-        self.position = (0, 0)
-        self.velocity = (0, 0)
-        self.acceleration = (0, 0)
+        self.position = [0, 0]
+        self.velocity = [0, 0]
+        self.acceleration = [0, 0]
 
         self.entityType = whichType
         self.currentAnimation = self.entityType.animations['idle']
         self.currentAnimationFrame = -1
-        self.currentFrame = None
+        self.currentFrame = self.getNextFrame()
 
         self.falling = True
         self.jumping = False

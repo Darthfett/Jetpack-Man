@@ -89,36 +89,36 @@ class Game:
         print "DEBUG: Starting Game"
         nextFrameTime = 0
         deltaFrameTime = 1000 / Game.FPSLimit
-#        try:
-        while True:
-            # Event Polling
-            event = pygame.event.poll()
-#                while event:
-#                    if (event.type == pygame.QUIT or event.key == pygame.K_ESCAPE):
-#                        print "User Quit"
-#                        raise Exception("UserQuitException")
-#
-#                    elif (event.type == pygame.KEYDOWN or event.type == pygame.KEYUP):
-#                        #Register Keypresses:
-#                        if Game.Controls.has_key(event.key):
-#                            self.registerInput(Game.Controls[event.key], event.type == pygame.KEYDOWN)
-#
-#                    event = pygame.event.poll()
+        try:
+            while True:
+                # Event Polling
+                event = pygame.event.poll()
+                while event:
+                    if (event.type == pygame.QUIT or event.key == pygame.K_ESCAPE):
+                        print "User Quit"
+                        raise Exception("UserQuitException")
 
-            currentTime = pygame.time.get_ticks()
-            if ((nextFrameTime - currentTime) <= 0):
-                pygame.display.flip()
+                    elif (event.type == pygame.KEYDOWN or event.type == pygame.KEYUP):
+                        #Register Keypresses:
+                        if Game.Controls.has_key(event.key):
+                            self.registerInput(Game.Controls[event.key], event.type == pygame.KEYDOWN)
 
-                self.nextFrame()
-                self.drawFrame()
-                nextFrameTime = currentTime + deltaFrameTime
+                    event = pygame.event.poll()
 
-            pygame.time.delay(1)
-#        except Exception as inst:
-#            print 'Exception:'
-#            print '\t', type(inst)
-#            print '\t', inst
-#            pygame.quit()
+                currentTime = pygame.time.get_ticks()
+                if ((nextFrameTime - currentTime) <= 0):
+                    pygame.display.flip()
+
+                    self.nextFrame()
+                    self.drawFrame()
+                    nextFrameTime = currentTime + deltaFrameTime
+
+                pygame.time.delay(1)
+        except Exception as inst:
+            print 'Exception:'
+            print '\t', type(inst)
+            print '\t', inst
+            pygame.quit()
 
     def initControls(self):
         print "DEBUG: Initializing Controls"

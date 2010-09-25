@@ -26,8 +26,8 @@ class EntityType:
         #    after the name, place a colon, then a relative path to the sprite image.
         #    separate multiple images with a ','.
         dir = os.path.join(os.getcwd(), 'EntityType')
-        os.chdir(dir)
-        for entityTypeName in os.listdir(os.getcwd()):
+        dir = os.path.join(os.path.dirname(__file__),'EntityType')
+        for entityTypeName in os.listdir(dir):
             print entityTypeName, os.path.isdir(entityTypeName)
             if (not os.path.isdir(entityTypeName)):
                 continue

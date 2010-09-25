@@ -25,18 +25,17 @@ class EntityType:
         #    each non-commented line should start with the name of the animation.
         #    after the name, place a colon, then a relative path to the sprite image.
         #    separate multiple images with a ','.
-        dir = os.path.join(os.getcwd(), 'EntityType')
-        dir = os.path.join(os.path.dirname(__file__),'EntityType')
+        dir = os.path.dirname(__file__)
         for entityTypeName in os.listdir(dir):
             print entityTypeName, os.path.isdir(entityTypeName)
-            if (not os.path.isdir(entityTypeName)):
+            if (not os.path.isdir(os.path.join(dir, entityTypeName))):
                 continue
             entityType = None
 
             animations = []
             keys = []
 
-            animData = open(os.path.join(os.getcwd(), os.path.join(entityTypeName, 'anim.dat'))).readlines()
+            animData = open(os.path.join(dir, os.path.join(entityTypeName, 'anim.dat'))).readlines()
             for line in animData:
                 line.strip()
                 if (line.startswith('#') or line == ''):
@@ -57,6 +56,6 @@ class EntityType:
                 values = values.pop(0).split(',')
                 for val in values:
                     val = val.strip()
-                    animation.add(os.path.join(entityTypeName, val))
+                    animation.add(os.path.join(dir, os.path.join(entityTypeName, val)))
             for animation in animations:
                     entityType.addAnimation(keys.pop(0), animation)

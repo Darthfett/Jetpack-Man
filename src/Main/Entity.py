@@ -6,23 +6,23 @@ class Entity:
     def getNextFrame(self):
         temp = self.currentAnimation
         self.currentAnimation = self.entityType.animations['idle']
-#        if (self.velocity == (0, 0)):
-#            self.currentAnimation = self.entityType.animations['idle']
-#        elif self.velocity[0] != 0 and self.velocity[1] == 0:
-#            try:
-#                self.currentAnimation = self.entityType.animations['move']
-#            except KeyError:
-#                self.currentAnimation = self.entityType.animations['idle']
-#        elif self.velocity[0] == 0 and self.velocity[1] != 0:
-#            try:
-#                self.currentAnimation = self.entityType.animations['jump']
-#            except KeyError:
-#                self.currentAnimation = self.entityType.animations['idle']
-#        else:
-#            try:
-#                self.currentAnimation = self.entityType.animations['jumpdiag']
-#            except KeyError:
-#                self.currentAnimation = self.entityType.animations['idle']
+        if (self.velocity == (0, 0)):
+            self.currentAnimation = self.entityType.animations['idle']
+        elif self.velocity[0] != 0 and self.velocity[1] == 0:
+            try:
+                self.currentAnimation = self.entityType.animations['move']
+            except KeyError:
+                self.currentAnimation = self.entityType.animations['idle']
+        elif self.velocity[0] == 0 and self.velocity[1] != 0:
+            try:
+                self.currentAnimation = self.entityType.animations['jump']
+            except KeyError:
+                self.currentAnimation = self.entityType.animations['idle']
+        else:
+            try:
+                self.currentAnimation = self.entityType.animations['jumpdiag']
+            except KeyError:
+                self.currentAnimation = self.entityType.animations['idle']
         if temp != self.currentAnimation:
             self.currentAnimationFrame = -1
         self.currentAnimationFrame += 1

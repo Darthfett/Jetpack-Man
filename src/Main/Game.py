@@ -1,3 +1,4 @@
+from Player import Player
 from Entity import Entity
 from EntityType import EntityType
 import pygame
@@ -9,7 +10,7 @@ class Game:
     Screen = None
     ScreenWidth = 800
     ScreenHeight = 600
-    FPSLimit = 100
+    FPSLimit = 50
 
     #Entities
     player = None
@@ -20,13 +21,9 @@ class Game:
     ControlState = [False] * ControlCount
     MoveLeft, MoveRight, Jump, Duck, Fly = range(ControlCount)
 
-    PlayerHorizontalMoveSpeed = 3
 
     #Physics
-    Gravity = 0.098
-
-    PlayerMaxJumpLength = 16
-    PlayerMaxFlyLength = 16
+    Gravity = .5
 
     def drawFrame(self):
         Game.Screen.fill((0, 0, 0))
@@ -53,7 +50,9 @@ class Game:
 
 
             if (entity.position[1] + pygame.Surface.get_height(entity.currentFrame) > Game.ScreenHeight):
+
                 entity.position[1] = Game.ScreenHeight - pygame.Surface.get_height(entity.currentFrame)
+                #entity.onLand()
                 entity.velocity[1] = 0
                 entity.falling = False
                 entity.flyCounter = Game.PlayerMaxFlyLength
@@ -62,30 +61,40 @@ class Game:
 
     def registerInput(self, inputType, press):
         Game.ControlState[inputType] = press
-        if (inputType == Game.MoveLeft and press) or (inputType == Game.MoveRight and not press):
-            Game.Player.velocity[0] -= Game.PlayerHorizontalMoveSpeed
-            if (inputType == Game.MoveLeft) or (Game.Player.velocity[0] < 0):
-                Game.Player.flipped = True
-        elif (inputType == Game.MoveLeft and not press) or (inputType == Game.MoveRight and press):
-            Game.Player.velocity[0] += Game.PlayerHorizontalMoveSpeed
-            if (inputType == Game.MoveRight) or (Game.Player.velocity[0] > 0):
-                Game.Player.flipped = False
-        elif (inputType == Game.Jump and press and not Game.Player.falling):
-            Game.Player.falling = True
-            Game.Player.velocity[1] += 24
-            Game.Player.jumping = True
-        elif (inputType == Game.Jump and not press):
-            Game.Player.jumpCounter = 0
-            Game.Player.jumping = False
-            if (Game.Player.velocity[1] > 0 and not Game.Player.flying):
-                Game.Player.velocity[1] = 0
-        elif (inputType == Game.Fly and press and not Game.Player.flying):
-            Game.Player.flying = True
-            Game.Player.acceleration[1] += 6
-            Game.Player.falling = True
-        elif (inputType == Game.Fly and not press and Game.Player.flying):
-            Game.Player.acceleration[1] -= 6
-            Game.Player.flying = False
+        if (inputType == Game.MoveRight):
+            Game.Player.run(press)
+        elif (inputType == Game.MoveLeft):
+            Game.Player.run(not press)
+        elif (inputType == Game.Jump):
+            Game.Player.jump(press)
+        elif (inputType == Game.Fly):
+            Game.Player.fly(press)
+
+
+#        if (inputType == Game.MoveLeft and press) or (inputType == Game.MoveRight and not press):
+#            Game.Player.velocity[0] -= Game.PlayerHorizontalMoveSpeed
+#            if (inputType == Game.MoveLeft) or (Game.Player.velocity[0] < 0):
+#                Game.Player.flipped = True
+#        elif (inputType == Game.MoveLeft and not press) or (inputType == Game.MoveRight and press):
+#            Game.Player.velocity[0] += Game.PlayerHorizontalMoveSpeed
+#            if (inputType == Game.MoveRight) or (Game.Player.velocity[0] > 0):
+#                Game.Player.flipped = False
+#        elif (inputType == Game.Jump and press and not Game.Player.falling):
+#            Game.Player.falling = True
+#            Game.Player.velocity[1] += 24
+#            Game.Player.jumping = True
+#        elif (inputType == Game.Jump and not press):
+#            Game.Player.jumpCounter = 0
+#            Game.Player.jumping = False
+#            if (Game.Player.velocity[1] > 0 and not Game.Player.flying):
+#                Game.Player.velocity[1] = 0
+#        elif (inputType == Game.Fly and press and not Game.Player.flying):
+#            Game.Player.flying = True
+#            Game.Player.acceleration[1] += 6
+#            Game.Player.falling = True
+#        elif (inputType == Game.Fly and not press and Game.Player.flying):
+#            Game.Player.acceleration[1] -= 6
+#            Game.Player.flying = False
 
     def quit(self):
         print "User Quit"
@@ -139,7 +148,7 @@ class Game:
     def initEntities(self):
         print "DEBUG: Initializing Entities"
         EntityType.initializeEntityTypes()
-        Game.Player = Entity(EntityType.EntityTypes['player'])
+        Game.Player = Player(EntityType.EntityTypes['player'])
         Game.Player.flipped = False
 
     def initScreen(self):

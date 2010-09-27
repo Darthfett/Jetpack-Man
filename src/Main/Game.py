@@ -37,27 +37,12 @@ class Game:
             entity.velocity = [entity.velocity[i] + entity.acceleration[i] for i in range(0, len(entity.position))]
             if (entity.falling):
                 entity.velocity[1] += Game.Gravity
-            if (entity.flying):
-                entity.flyCounter -= 2
-            if (entity.flyCounter <= 0):
-                if (entity.flying):
-                    entity.acceleration[1] += 6
-                entity.flying = False
-            if (entity.jumping):
-                entity.jumpCounter += 2
-                if (entity.jumpCounter > Game.PlayerMaxJumpLength):
-                    entity.jumping = False
 
 
             if (entity.position[1] + pygame.Surface.get_height(entity.currentFrame) > Game.ScreenHeight):
 
                 entity.position[1] = Game.ScreenHeight - pygame.Surface.get_height(entity.currentFrame)
-                #entity.onLand()
-                entity.velocity[1] = 0
-                entity.falling = False
-                entity.flyCounter = Game.PlayerMaxFlyLength
-                entity.acceleration[1] = 0
-                entity.flying = False
+                entity.onLand()
 
     def registerInput(self, inputType, press):
         Game.ControlState[inputType] = press

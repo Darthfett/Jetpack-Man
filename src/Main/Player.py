@@ -11,10 +11,11 @@ class Player(Entity):
     def fly(self, isStarting):
         if (not self.flying and isStarting):
             self.flying = True
-            self.acceleration[1] -= 6
+            self.falling = True
+            self.acceleration[1] -= 1
         elif (self.flying and not isStarting):
             self.flying = False
-            self.acceleration[1] += 6
+            self.acceleration[1] += 1
         print "DEBUG: Player Flying:", isStarting
 
     def jump(self, isStarting):
@@ -24,9 +25,9 @@ class Player(Entity):
             self.jumpCounter = 0
             self.falling = True
             self.velocity[1] -= Player.JumpInitialVelocity
-        else:
+        elif (not isStarting):
             self.jumping = False
-            if (self.velocity[1] > 0 and not self.flying):
+            if (self.velocity[1] < 0 and not self.flying):
                 self.velocity[1] = 0
 
     def run(self, toRight):
@@ -41,6 +42,20 @@ class Player(Entity):
         print "DEBUG: Player Landing"
         self.jumping = False
         self.flying = False
+
+    def run(self, toRight):
+        print "DEBUG: Player Running:", toRight
+        self.velocity[0] += ((Player.HorizontalMoveSpeed) if toRight else (-Player.HorizontalMoveSpeed))
+        if (self.velocity[0] > 0):
+            self.flipped = False
+        elif (self.velocity[0] < 0):
+            self.flipped = True
+
+    def onLand(self):
+        print "DEBUG: Player Landing"
+        self.jumping = False
+        self.flying = False
+        self.falling = False
         self.velocity[1] = 0
         self.acceleration[1] = 0
 

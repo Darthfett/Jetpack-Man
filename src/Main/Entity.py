@@ -1,3 +1,11 @@
+"""
+
+An Entity is an object that is drawn to the screen.
+
+It can have animations, as well as position, velocity, and acceleration.
+
+"""
+
 import pygame
 
 class Entity:
@@ -6,6 +14,8 @@ class Entity:
     def getNextFrame(self):
         temp = self.currentAnimation
         self.currentAnimation = self.entityType.animations['idle']
+        if (self.velocity[0] != 0):
+            self.currentAnimation = self.entityType.animations['move']
 
         # Possibly here, determine animation
 

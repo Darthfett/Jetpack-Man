@@ -1,3 +1,9 @@
+"""
+
+The Player is the Entity that the player controls.
+
+"""
+
 from Entity import Entity
 
 class Player(Entity):
@@ -29,19 +35,6 @@ class Player(Entity):
             self.jumping = False
             if (self.velocity[1] < 0 and not self.flying):
                 self.velocity[1] = 0
-
-    def run(self, toRight):
-        print "DEBUG: Player Running:", toRight
-        self.velocity[0] += ((Player.HorizontalMoveSpeed) if toRight else (-Player.HorizontalMoveSpeed))
-        if (self.velocity[0] > 0):
-            self.flipped = False
-        elif (self.velocity[0] < 0):
-            self.flipped = True
-
-    def onLand(self):
-        print "DEBUG: Player Landing"
-        self.jumping = False
-        self.flying = False
 
     def run(self, toRight):
         print "DEBUG: Player Running:", toRight

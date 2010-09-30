@@ -1,3 +1,9 @@
+"""
+
+An Animation is a list of frames.
+
+"""
+
 import pygame
 
 class Animation:

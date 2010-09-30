@@ -1,3 +1,10 @@
+"""
+
+An EntityType contains data that is common to all Entities of the same type.
+
+Here, all EntityTypes have the same Animations.
+
+"""
 from Main.Animation import Animation
 import os
 

@@ -1,3 +1,38 @@
+"""
+
+Contains the Engine for the game.
+
+Game.drawFrame(self):
+    Draws the current frame of the game to the screen
+    
+Game.nextFrame(self):
+    Computes the current frame of the game.
+    
+Game.registerInput(self,inputType,press):
+    Registers the inputType key (press determines if it was pressed or released).
+    Keys are:
+        MoveLeft, MoveRight, Jump, Duck, Fly.
+        
+Game.quit(self):
+    Quits the game (Run when a user decides to quit the game).
+    
+Game.start(self):
+    Starts the game (Run from the main function)
+    
+Game.initControls(self):
+    Sets up the controls for MoveLeft,MoveRight,Jump,Duck,Fly,Quit
+    
+Game.initEntities(self):
+    Sets up the Entities and loads the EntityTypes into memory.  Also creates the player.
+    
+Game.initScreen(self):
+    Sets up the pygame screen.
+    
+Game.__init__(self):
+    Initializes the game (doesn't do anything currently)
+    
+"""
+
 from Player import Player
 from Entity import Entity
 from EntityType import EntityType
@@ -10,7 +45,7 @@ class Game:
     Screen = None
     ScreenWidth = 800
     ScreenHeight = 600
-    FPSLimit = 50
+    FPSLimit = 15
 
     #Entities
     player = None

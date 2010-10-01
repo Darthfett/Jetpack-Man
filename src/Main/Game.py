@@ -31,7 +31,10 @@ class Game:
         """
         Game.Screen.fill((0, 0, 0))
         for entity in Entity.Entities:
-            Game.Screen.blit(entity.getNextFrame(), entity.position)
+            entity.currentFrame = entity.currentAnimation.frame[(self.frameCount * entity.currentAnimation.fps / Game.FPSLimit) % len(entity.currentAnimation.frame)]
+            if entity.flipped:
+                entity.currentFrame = pygame.transform.flip(entity.currentFrame, 1, 0)
+            Game.Screen.blit(entity.currentFrame, entity.position)
 
     def _nextFrame(self):
         """
@@ -49,6 +52,7 @@ class Game:
 
                 entity.position[1] = Game.ScreenHeight - pygame.Surface.get_height(entity.currentFrame)
                 entity.onLand()
+            entity.getNextFrame()
 
     def _registerInput(self, inputType, press):
         """
@@ -81,6 +85,22 @@ class Game:
         print "User Quit"
         raise Exception("UserQuitException")
 
+    def _handleEvents(self):
+        event = pygame.event.poll()
+        while event:
+            if (event.type == pygame.QUIT):
+                self._quit()
+
+            elif (event.type == pygame.KEYDOWN or event.type == pygame.KEYUP):
+                #Register Keypresses:
+                if (event.key == pygame.K_ESCAPE):
+                    self._quit()
+                if Game.Controls.has_key(event.key):
+                    self._registerInput(Game.Controls[event.key], event.type == pygame.KEYDOWN)
+
+            event = pygame.event.poll()
+
+
     def _start(self):
         """
         Starts the game
@@ -90,38 +110,21 @@ class Game:
         print "DEBUG: Starting Game"
         nextFrameTime = 0
         deltaFrameTime = 1000 / Game.FPSLimit
-#        try:
-        while True:
-            # Event Polling
-            event = pygame.event.poll()
-            while event:
+        try:
+            while True:
+                self._handleEvents()
 
-                if (event.type == pygame.QUIT):
-                    self._quit()
+                currentTime = pygame.time.get_ticks()
+                if ((nextFrameTime - currentTime) <= 0):
+                    pygame.display.flip()
+                    self.frameCount += 1
+                    self._nextFrame()
+                    self._drawFrame()
+                    nextFrameTime = currentTime + deltaFrameTime
 
-                elif (event.type == pygame.KEYDOWN or event.type == pygame.KEYUP):
-                    #Register Keypresses:
-                    if (event.key == pygame.K_ESCAPE):
-                        self._quit()
-                    if Game.Controls.has_key(event.key):
-                        self._registerInput(Game.Controls[event.key], event.type == pygame.KEYDOWN)
-
-                event = pygame.event.poll()
-
-            currentTime = pygame.time.get_ticks()
-            if ((nextFrameTime - currentTime) <= 0):
-                pygame.display.flip()
-
-                self._nextFrame()
-                self._drawFrame()
-                nextFrameTime = currentTime + deltaFrameTime
-
-            pygame.time.delay(1)
-#        except Exception as inst:
-#            print 'Exception:'
-#            print '\t', type(inst)
-#            print '\t', inst
-#            pygame.quit()
+                pygame.time.delay(1)
+        finally:
+            pygame.quit()
 
     def _initControls(self):
         """
@@ -155,6 +158,7 @@ class Game:
         """
         Initializes the game (doesn't do anything currently)
         """
+        self.frameCount = 0
         self._initScreen()
         self._initEntities()
         self._initControls()

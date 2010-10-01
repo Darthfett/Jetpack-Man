@@ -17,9 +17,10 @@ class Game:
 
     #Controls
     Controls = {}
-    ControlCount = 5
+    ControlCount = 6
     ControlState = [False] * ControlCount
-    MoveLeft, MoveRight, Jump, Duck, Fly = range(ControlCount)
+    BoundControls = []
+    MoveLeft, MoveRight, Jump, Duck, Fly, Quit = range(ControlCount)
 
 
     #Physics
@@ -36,47 +37,41 @@ class Game:
                 entity.currentFrame = pygame.transform.flip(entity.currentFrame, 1, 0)
             Game.Screen.blit(entity.currentFrame, entity.position)
 
+    def handleInput(self):
+        """
+        
+        Performs the Player's actions
+        Actions are:
+            MoveLeft, MoveRight, Jump, Duck, Fly.
+        
+        """
+        Game.Player.running(Game.ControlState[Game.MoveRight], not (Game.ControlState[Game.MoveRight] == Game.ControlState[Game.MoveLeft]))
+        Game.Player.jumping(Game.ControlState[Game.Jump])
+        Game.Player.flying(Game.ControlState[Game.Fly])
+
     def _nextFrame(self):
         """
         Computes the current frame of the game
         """
+        self.handleInput()
+
         for entity in Entity.Entities:
-
-            entity.position = [entity.position[i] + entity.velocity[i] for i in range(0, len(entity.position))]
-            entity.velocity = [entity.velocity[i] + entity.acceleration[i] for i in range(0, len(entity.position))]
-            if (entity.falling):
+            #Acceleration
+            if (entity.isFalling):
                 entity.velocity[1] += Game.Gravity
+                pass
 
+            #Velocity
+            entity.velocity = [entity.velocity[i] + entity.acceleration[i] for i in range(len(entity.velocity))]
 
+            #Position
+            entity.position = [entity.position[i] + entity.velocity[i] for i in range(len(entity.position))]
             if (entity.position[1] + pygame.Surface.get_height(entity.currentFrame) > Game.ScreenHeight):
-
                 entity.position[1] = Game.ScreenHeight - pygame.Surface.get_height(entity.currentFrame)
                 entity.onLand()
+
+            #Animation
             entity.getNextFrame()
-
-    def _registerInput(self, inputType, press):
-        """
-        
-        Registers the inputType key (press determines if it was pressed or released).
-        Keys are:
-            MoveLeft, MoveRight, Jump, Duck, Fly.
-        
-        """
-        Game.ControlState[inputType] = press
-        if (inputType == Game.MoveRight):
-            Game.Player.run(press)
-        elif (inputType == Game.MoveLeft):
-            Game.Player.run(not press)
-        elif (inputType == Game.Jump):
-            Game.Player.jump(press)
-        elif (inputType == Game.Fly):
-            Game.Player.fly(press)
-
-    def exit(self):
-        """
-        Exits the game with an exception
-        """
-        raise Exception("ExitException")
 
     def _quit(self):
         """
@@ -86,20 +81,12 @@ class Game:
         raise Exception("UserQuitException")
 
     def _handleEvents(self):
-        event = pygame.event.poll()
-        while event:
-            if (event.type == pygame.QUIT):
-                self._quit()
-
-            elif (event.type == pygame.KEYDOWN or event.type == pygame.KEYUP):
-                #Register Keypresses:
-                if (event.key == pygame.K_ESCAPE):
-                    self._quit()
-                if Game.Controls.has_key(event.key):
-                    self._registerInput(Game.Controls[event.key], event.type == pygame.KEYDOWN)
-
-            event = pygame.event.poll()
-
+        pygame.event.pump()
+        keyboardState = pygame.key.get_pressed()
+        for key in Game.BoundControls:
+            Game.ControlState[Game.Controls[key]] = keyboardState[key]
+        if Game.ControlState[Game.Quit]:
+            self._quit()
 
     def _start(self):
         """
@@ -136,6 +123,14 @@ class Game:
         Game.Controls[pygame.K_w] = Game.Jump
         Game.Controls[pygame.K_s] = Game.Duck
         Game.Controls[pygame.K_SPACE] = Game.Fly
+        Game.Controls[pygame.K_ESCAPE] = Game.Quit
+
+        Game.BoundControls.append(pygame.K_a)
+        Game.BoundControls.append(pygame.K_d)
+        Game.BoundControls.append(pygame.K_w)
+        Game.BoundControls.append(pygame.K_s)
+        Game.BoundControls.append(pygame.K_SPACE)
+        Game.BoundControls.append(pygame.K_ESCAPE)
 
     def _initEntities(self):
         """

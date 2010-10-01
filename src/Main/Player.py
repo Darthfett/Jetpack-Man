@@ -7,67 +7,72 @@ The Player is the Entity that the player controls.
 from Entity import Entity
 
 class Player(Entity):
-    HorizontalMoveSpeed = 5
 
-    JumpInitialVelocity = 12
+    FlyAcceleration = 0.6
+    JumpInitialVelocity = 10
+    HorizontalMoveSpeed = 3
+
     MaxJumpLength = 16
 
     MaxFlyLength = 16
 
-    def fly(self, isStarting):
+    def flying(self, isFlying):
         """
         Starts/Stops the player's jetpack.        
         """
-        if (not self.flying and isStarting):
-            self.flying = True
-            self.falling = True
-            self.acceleration[1] -= 1
-        elif (self.flying and not isStarting):
-            self.flying = False
-            self.acceleration[1] += 1
-        print "DEBUG: Player Flying:", isStarting
+        if (not self.isFlying and isFlying):
+            print "DEBUG: Player started Flying"
+            self.isFlying = True
+            self.isFalling = True
+            self.acceleration[1] -= Player.FlyAcceleration
+        elif (self.isFlying and not isFlying):
+            print "DEBUG: Player stopped Flying"
+            self.isFlying = False
+            self.acceleration[1] += Player.FlyAcceleration
 
-    def jump(self, isStarting):
+    def jumping(self, isJumping):
         """
         Starts/Stops the player's jump
         """
-        print "DEBUG: Player Jumping:", isStarting
-        if (isStarting and not self.falling):
-            self.jumping = True
-            self.jumpCounter = 0
-            self.falling = True
+        if (isJumping and not self.isJumping and not self.isFalling):
+            print "DEBUG: Player starting Jumping"
+            self.isJumping = True
+            self.isFalling = True
             self.velocity[1] -= Player.JumpInitialVelocity
-        elif (not isStarting):
-            self.jumping = False
-            if (self.velocity[1] < 0 and not self.flying):
+        elif (not isJumping and self.isJumping):
+            print "DEBUG: Player stopped Jumping"
+            self.isJumping = False
+            if (self.velocity[1] < 0 and not self.isFlying):
                 self.velocity[1] = 0
 
-    def run(self, toRight):
+    def running(self, toRight, isRunning):
         """
         Starts/Stops the player's horizontal movement.
         """
-        print "DEBUG: Player Running:", toRight
-        self.velocity[0] += ((Player.HorizontalMoveSpeed) if toRight else (-Player.HorizontalMoveSpeed))
-        if (self.velocity[0] > 0):
-            self.flipped = False
-        elif (self.velocity[0] < 0):
-            self.flipped = True
+        if not isRunning:
+            self.velocity[0] = 0
+        else:
+            self.velocity[0] = ((Player.HorizontalMoveSpeed) if toRight else (-Player.HorizontalMoveSpeed))
+            if (self.velocity[0] > 0):
+                self.flipped = False
+            elif (self.velocity[0] < 0):
+                self.flipped = True
 
     def onLand(self):
         """
         Called when the player lands on ground of some sort
         """
         print "DEBUG: Player Landing"
-        self.jumping = False
-        self.flying = False
-        self.falling = False
+        self.isJumping = False
+        self.isFlying = False
+        self.isFalling = False
         self.velocity[1] = 0
         self.acceleration[1] = 0
 
     def __init__(self, whichType):
         Entity.__init__(self, whichType)
-        self.falling = True
-        self.jumping = False
+        self.isFalling = True
+        self.isJumping = False
         self.jumpCounter = Player.MaxFlyLength
-        self.flying = False
+        self.isFlying = False
         self.flyCounter = 0

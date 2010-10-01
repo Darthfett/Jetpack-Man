@@ -39,7 +39,6 @@ class EntityType:
         print "Initializing Entity Types"
         dir = os.path.dirname(__file__)
         for entityTypeName in os.listdir(dir):
-            print entityTypeName, os.path.isdir(entityTypeName)
             if (not os.path.isdir(os.path.join(dir, entityTypeName))):
                 continue
             entityType = None
@@ -59,7 +58,6 @@ class EntityType:
                 values = line.split(':')
                 key = values.pop(0)
                 if (key == 'idle'):
-                    print 'entity type definition:', entityTypeName
                     entityType = EntityType(entityTypeName, animation)
 
                 else:

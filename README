@@ -1,6 +1,6 @@
 = Running the Game =
 
-python src/run_game.py
+python run_game.py
 
 = Requirements =
 

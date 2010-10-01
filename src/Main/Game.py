@@ -1,38 +1,3 @@
-"""
-
-Contains the Engine for the game.
-
-Game.drawFrame(self):
-    Draws the current frame of the game to the screen
-    
-Game.nextFrame(self):
-    Computes the current frame of the game.
-    
-Game.registerInput(self,inputType,press):
-    Registers the inputType key (press determines if it was pressed or released).
-    Keys are:
-        MoveLeft, MoveRight, Jump, Duck, Fly.
-        
-Game.quit(self):
-    Quits the game (Run when a user decides to quit the game).
-    
-Game.start(self):
-    Starts the game (Run from the main function)
-    
-Game.initControls(self):
-    Sets up the controls for MoveLeft,MoveRight,Jump,Duck,Fly,Quit
-    
-Game.initEntities(self):
-    Sets up the Entities and loads the EntityTypes into memory.  Also creates the player.
-    
-Game.initScreen(self):
-    Sets up the pygame screen.
-    
-Game.__init__(self):
-    Initializes the game (doesn't do anything currently)
-    
-"""
-
 from Player import Player
 from Entity import Entity
 from EntityType import EntityType
@@ -45,7 +10,7 @@ class Game:
     Screen = None
     ScreenWidth = 800
     ScreenHeight = 600
-    FPSLimit = 15
+    FPSLimit = 60
 
     #Entities
     player = None
@@ -60,12 +25,18 @@ class Game:
     #Physics
     Gravity = .5
 
-    def drawFrame(self):
+    def _drawFrame(self):
+        """
+        Draws the current frame to the screen
+        """
         Game.Screen.fill((0, 0, 0))
         for entity in Entity.Entities:
             Game.Screen.blit(entity.getNextFrame(), entity.position)
 
-    def nextFrame(self):
+    def _nextFrame(self):
+        """
+        Computes the current frame of the game
+        """
         for entity in Entity.Entities:
 
             entity.position = [entity.position[i] + entity.velocity[i] for i in range(0, len(entity.position))]
@@ -79,7 +50,14 @@ class Game:
                 entity.position[1] = Game.ScreenHeight - pygame.Surface.get_height(entity.currentFrame)
                 entity.onLand()
 
-    def registerInput(self, inputType, press):
+    def _registerInput(self, inputType, press):
+        """
+        
+        Registers the inputType key (press determines if it was pressed or released).
+        Keys are:
+            MoveLeft, MoveRight, Jump, Duck, Fly.
+        
+        """
         Game.ControlState[inputType] = press
         if (inputType == Game.MoveRight):
             Game.Player.run(press)
@@ -90,37 +68,25 @@ class Game:
         elif (inputType == Game.Fly):
             Game.Player.fly(press)
 
+    def exit(self):
+        """
+        Exits the game with an exception
+        """
+        raise Exception("ExitException")
 
-#        if (inputType == Game.MoveLeft and press) or (inputType == Game.MoveRight and not press):
-#            Game.Player.velocity[0] -= Game.PlayerHorizontalMoveSpeed
-#            if (inputType == Game.MoveLeft) or (Game.Player.velocity[0] < 0):
-#                Game.Player.flipped = True
-#        elif (inputType == Game.MoveLeft and not press) or (inputType == Game.MoveRight and press):
-#            Game.Player.velocity[0] += Game.PlayerHorizontalMoveSpeed
-#            if (inputType == Game.MoveRight) or (Game.Player.velocity[0] > 0):
-#                Game.Player.flipped = False
-#        elif (inputType == Game.Jump and press and not Game.Player.falling):
-#            Game.Player.falling = True
-#            Game.Player.velocity[1] += 24
-#            Game.Player.jumping = True
-#        elif (inputType == Game.Jump and not press):
-#            Game.Player.jumpCounter = 0
-#            Game.Player.jumping = False
-#            if (Game.Player.velocity[1] > 0 and not Game.Player.flying):
-#                Game.Player.velocity[1] = 0
-#        elif (inputType == Game.Fly and press and not Game.Player.flying):
-#            Game.Player.flying = True
-#            Game.Player.acceleration[1] += 6
-#            Game.Player.falling = True
-#        elif (inputType == Game.Fly and not press and Game.Player.flying):
-#            Game.Player.acceleration[1] -= 6
-#            Game.Player.flying = False
-
-    def quit(self):
+    def _quit(self):
+        """
+        Quits the game (specifically when a user decides to)        
+        """
         print "User Quit"
         raise Exception("UserQuitException")
 
-    def start(self):
+    def _start(self):
+        """
+        Starts the game
+        Main loop
+        Handles keyboard/mouse events        
+        """
         print "DEBUG: Starting Game"
         nextFrameTime = 0
         deltaFrameTime = 1000 / Game.FPSLimit
@@ -131,14 +97,14 @@ class Game:
             while event:
 
                 if (event.type == pygame.QUIT):
-                    self.quit()
+                    self._quit()
 
                 elif (event.type == pygame.KEYDOWN or event.type == pygame.KEYUP):
                     #Register Keypresses:
                     if (event.key == pygame.K_ESCAPE):
-                        self.quit()
+                        self._quit()
                     if Game.Controls.has_key(event.key):
-                        self.registerInput(Game.Controls[event.key], event.type == pygame.KEYDOWN)
+                        self._registerInput(Game.Controls[event.key], event.type == pygame.KEYDOWN)
 
                 event = pygame.event.poll()
 
@@ -146,8 +112,8 @@ class Game:
             if ((nextFrameTime - currentTime) <= 0):
                 pygame.display.flip()
 
-                self.nextFrame()
-                self.drawFrame()
+                self._nextFrame()
+                self._drawFrame()
                 nextFrameTime = currentTime + deltaFrameTime
 
             pygame.time.delay(1)
@@ -157,7 +123,10 @@ class Game:
 #            print '\t', inst
 #            pygame.quit()
 
-    def initControls(self):
+    def _initControls(self):
+        """
+        Sets up the controls for MoveLeft,MoveRight,Jump,Duck,Fly,Quit
+        """
         print "DEBUG: Initializing Controls"
         Game.Controls[pygame.K_a] = Game.MoveLeft
         Game.Controls[pygame.K_d] = Game.MoveRight
@@ -165,17 +134,30 @@ class Game:
         Game.Controls[pygame.K_s] = Game.Duck
         Game.Controls[pygame.K_SPACE] = Game.Fly
 
-    def initEntities(self):
+    def _initEntities(self):
+        """
+        Sets up the Entities and loads the EntityTypes into memory.  Also creates the player.
+        """
         print "DEBUG: Initializing Entities"
         EntityType.initializeEntityTypes()
         Game.Player = Player(EntityType.EntityTypes['player'])
         Game.Player.flipped = False
 
-    def initScreen(self):
+    def _initScreen(self):
+        """
+        Sets up the pygame screen.
+        """
         print "DEBUG: Initializing Screen"
         os.environ['SDL_VIDEO_CENTERED'] = '1'
         Game.Screen = pygame.display.set_mode((Game.ScreenWidth, Game.ScreenHeight))
 
     def __init__(self):
+        """
+        Initializes the game (doesn't do anything currently)
+        """
+        self._initScreen()
+        self._initEntities()
+        self._initControls()
+        self._start()
         print "DEBUG: Initializing Game"
         pass

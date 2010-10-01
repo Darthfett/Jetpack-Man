@@ -15,6 +15,9 @@ class Player(Entity):
     MaxFlyLength = 16
 
     def fly(self, isStarting):
+        """
+        Starts/Stops the player's jetpack.        
+        """
         if (not self.flying and isStarting):
             self.flying = True
             self.falling = True
@@ -25,6 +28,9 @@ class Player(Entity):
         print "DEBUG: Player Flying:", isStarting
 
     def jump(self, isStarting):
+        """
+        Starts/Stops the player's jump
+        """
         print "DEBUG: Player Jumping:", isStarting
         if (isStarting and not self.falling):
             self.jumping = True
@@ -37,6 +43,9 @@ class Player(Entity):
                 self.velocity[1] = 0
 
     def run(self, toRight):
+        """
+        Starts/Stops the player's horizontal movement.
+        """
         print "DEBUG: Player Running:", toRight
         self.velocity[0] += ((Player.HorizontalMoveSpeed) if toRight else (-Player.HorizontalMoveSpeed))
         if (self.velocity[0] > 0):
@@ -45,6 +54,9 @@ class Player(Entity):
             self.flipped = True
 
     def onLand(self):
+        """
+        Called when the player lands on ground of some sort
+        """
         print "DEBUG: Player Landing"
         self.jumping = False
         self.flying = False

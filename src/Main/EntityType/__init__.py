@@ -1,20 +1,24 @@
-"""
-
-An EntityType contains data that is common to all Entities of the same type.
-
-Here, all EntityTypes have the same Animations.
-
-"""
 from Main.Animation import Animation
 import os
 
 class EntityType:
+    """
+    An EntityType contains data that is common to all Entities of the same type.
+
+    e.g. all EntityTypes have the same Animations.
+    """
     EntityTypes = {}
 
     def addAnimation(self, name, animation):
+        """
+        Adds the name of an animation and the path to the file into a dictionary for later use.
+        """
         self.animations[name] = animation
 
     def __init__(self, name, idle):
+        """
+        Defines a type of Entity with a name and a default 'idle' animation.
+        """
         EntityType.EntityTypes[name] = self
         #Data
         #Animations
@@ -23,15 +27,16 @@ class EntityType:
 
     @staticmethod
     def initializeEntityTypes():
+        """
+         parses through all subdirectories under 'Megaman Remake\src\Main\EntityType\' to create the EntityTypes and add their respective
+            animations contained in the anim.dat file
+        
+         anim.dat: comments start with a '#'.
+            each non-commented line should start with the name of the animation.
+            after the name, place a colon, then a relative path to the sprite image.
+            separate multiple images with a ','.
+        """
         print "Initializing Entity Types"
-
-        # parsing through all subdirectories under 'Megaman Remake\src\Main\EntityType\' to create the EntityTypes and add their respective
-        #    animations contained in the anim.dat file
-        #
-        # anim.dat: comments start with a '#'.
-        #    each non-commented line should start with the name of the animation.
-        #    after the name, place a colon, then a relative path to the sprite image.
-        #    separate multiple images with a ','.
         dir = os.path.dirname(__file__)
         for entityTypeName in os.listdir(dir):
             print entityTypeName, os.path.isdir(entityTypeName)

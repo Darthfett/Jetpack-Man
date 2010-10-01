@@ -28,7 +28,7 @@ class EntityType:
     @staticmethod
     def initializeEntityTypes():
         """
-         parses through all subdirectories under 'Megaman Remake\src\Main\EntityType\' to create the EntityTypes and add their respective
+         parses through all subdirectories under 'src\Main\EntityType\' to create the EntityTypes and add their respective
             animations contained in the anim.dat file
         
          anim.dat: comments start with a '#'.

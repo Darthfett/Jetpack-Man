@@ -4,8 +4,6 @@ An Entity is an object that is drawn to the screen.
 It can have animations, as well as position, velocity, and acceleration.
 """
 
-import pygame
-
 class Entity:
     Entities = []
 

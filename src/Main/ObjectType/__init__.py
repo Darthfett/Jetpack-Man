@@ -1,34 +1,45 @@
 from Main.Animation import Animation
 import os
 
-class EntityType:
+class ObjectType:
     """
-    An EntityType contains data that is common to all Entities of the same type.
+    An ObjectType contains data that is common to all Entities of the same type.
 
-    e.g. all EntityTypes have the same Animations.
+    e.g. all ObjectTypes have the same Animations.
     """
-    EntityTypes = {}
+    
+    Height = 0
+    Width = 0
+    
+    ObjectTypes = {}
 
     def addAnimation(self, name, animation):
         """
         Adds the name of an animation and the path to the file into a dictionary for later use.
         """
+        self.width = max(self.width,animation.width)
+        self.height = max(self.height,animation.height)
+        ObjectType.Width = max(ObjectType.Width,self.width)
+        ObjectType.Height = max(ObjectType.Height,self.height)
         self.animations[name] = animation
 
     def __init__(self, name, idle):
         """
-        Defines a type of Entity with a name and a default 'idle' animation.
+        Defines a type of Object with a name and a default 'idle' animation.
         """
-        EntityType.EntityTypes[name] = self
+        
+        ObjectType.ObjectTypes[name] = self
         #Data
         #Animations
         self.animations = {}
         self.animations['idle'] = idle
+        self.width = idle.width
+        self.height = idle.height
 
     @staticmethod
-    def initializeEntityTypes():
+    def initializeObjectTypes():
         """
-         parses through all subdirectories under 'src\Main\EntityType\' to create the EntityTypes and add their respective
+         parses through all subdirectories under 'src\Main\ObjectType\' to create the ObjectTypes and add their respective
             animations contained in the anim.dat file
         
          anim.dat: comments start with a '#'.
@@ -36,17 +47,18 @@ class EntityType:
             after the name, place a colon, then a relative path to the sprite image.
             separate multiple images with a ','.
         """
-        print "Initializing Entity Types"
+        
+        print "Initializing Object Types"
         dir = os.path.dirname(__file__)
-        for entityTypeName in os.listdir(dir):
-            if (not os.path.isdir(os.path.join(dir, entityTypeName))):
+        for ObjectTypeName in os.listdir(dir):
+            if (not os.path.isdir(os.path.join(dir, ObjectTypeName))):
                 continue
-            entityType = None
+            objectType = None
 
             animations = []
             keys = []
 
-            animData = open(os.path.join(dir, os.path.join(entityTypeName, 'anim.dat'))).readlines()
+            animData = open(os.path.join(dir, os.path.join(ObjectTypeName, 'anim.dat'))).readlines()
             for line in animData:
                 line.strip()
                 if (line.startswith('#') or line == ''):
@@ -58,7 +70,7 @@ class EntityType:
                 values = line.split(':')
                 key = values.pop(0)
                 if (key == 'idle'):
-                    entityType = EntityType(entityTypeName, animation)
+                    objectType = ObjectType(ObjectTypeName, animation)
 
                 else:
                     animations.append(animation)
@@ -66,6 +78,6 @@ class EntityType:
                 values = values.pop(0).split(',')
                 for val in values:
                     val = val.strip()
-                    animation.add(os.path.join(dir, os.path.join(entityTypeName, val)))
+                    animation.add(os.path.join(dir, os.path.join(ObjectTypeName, val)))
             for animation in animations:
-                    entityType.addAnimation(keys.pop(0), animation)
+                    objectType.addAnimation(keys.pop(0), animation)

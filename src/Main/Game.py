@@ -1,6 +1,7 @@
-from Player import Player
+from Object import Object
 from Entity import Entity
-from EntityType import EntityType
+from Player import Player
+from ObjectType import ObjectType
 import pygame
 import os
 
@@ -12,8 +13,10 @@ class Game:
     ScreenHeight = 600
     FPSLimit = 60
 
-    #Entities
-    player = None
+    #Objects
+    Objects = []
+    Entities = []
+    Player = None
 
     #Controls
     Controls = {}
@@ -25,17 +28,31 @@ class Game:
 
     #Physics
     Gravity = .5
+    
+    def _drawObject(self,object):
+        """
+        Draws the given object to the screen
+        """
+        
+        object.currentFrame = object.currentAnimation.frame[(self.frameCount * object.currentAnimation.fps / Game.FPSLimit) % len(object.currentAnimation.frame)]
+        if object.flipped:
+            object.currentFrame = pygame.transform.flip(object.currentFrame, 1, 0)
+        Game.Screen.blit(object.currentFrame, object.position)
 
     def _drawFrame(self):
         """
         Draws the current frame to the screen
         """
+        
         Game.Screen.fill((0, 0, 0))
+        for object in Object.Objects:
+            self._drawObject(object)
+            
         for entity in Entity.Entities:
-            entity.currentFrame = entity.currentAnimation.frame[(self.frameCount * entity.currentAnimation.fps / Game.FPSLimit) % len(entity.currentAnimation.frame)]
-            if entity.flipped:
-                entity.currentFrame = pygame.transform.flip(entity.currentFrame, 1, 0)
-            Game.Screen.blit(entity.currentFrame, entity.position)
+            self._drawObject(entity)
+            
+        self._drawObject(Game.Player)
+            
 
     def handleInput(self):
         """
@@ -45,14 +62,18 @@ class Game:
             MoveLeft, MoveRight, Jump, Duck, Fly.
         
         """
+        
         Game.Player.running(Game.ControlState[Game.MoveRight], not (Game.ControlState[Game.MoveRight] == Game.ControlState[Game.MoveLeft]))
         Game.Player.jumping(Game.ControlState[Game.Jump])
         Game.Player.flying(Game.ControlState[Game.Fly])
+        
+    
 
     def _nextFrame(self):
         """
         Computes the current frame of the game
         """
+        
         self.handleInput()
 
         for entity in Entity.Entities:
@@ -69,7 +90,7 @@ class Game:
             if (entity.position[1] + pygame.Surface.get_height(entity.currentFrame) > Game.ScreenHeight):
                 entity.position[1] = Game.ScreenHeight - pygame.Surface.get_height(entity.currentFrame)
                 entity.onLand()
-
+            
             #Animation
             entity.getNextFrame()
 
@@ -77,10 +98,15 @@ class Game:
         """
         Quits the game (specifically when a user decides to)        
         """
+        
         print "User Quit"
         raise Exception("UserQuitException")
 
     def _handleEvents(self):
+        """        
+        Handles all keyboard events        
+        """
+        
         pygame.event.pump()
         keyboardState = pygame.key.get_pressed()
         for key in Game.BoundControls:
@@ -94,6 +120,7 @@ class Game:
         Main loop
         Handles keyboard/mouse events        
         """
+        
         print "DEBUG: Starting Game"
         nextFrameTime = 0
         deltaFrameTime = 1000 / Game.FPSLimit
@@ -117,6 +144,7 @@ class Game:
         """
         Sets up the controls for MoveLeft,MoveRight,Jump,Duck,Fly,Quit
         """
+        
         print "DEBUG: Initializing Controls"
         Game.Controls[pygame.K_a] = Game.MoveLeft
         Game.Controls[pygame.K_d] = Game.MoveRight
@@ -132,19 +160,23 @@ class Game:
         Game.BoundControls.append(pygame.K_SPACE)
         Game.BoundControls.append(pygame.K_ESCAPE)
 
-    def _initEntities(self):
+    def _initObjects(self):
         """
-        Sets up the Entities and loads the EntityTypes into memory.  Also creates the player.
+        Sets up the Objects and loads the Objects into memory.  Also creates the player.
         """
+        
         print "DEBUG: Initializing Entities"
-        EntityType.initializeEntityTypes()
-        Game.Player = Player(EntityType.EntityTypes['player'])
+        ObjectType.initializeObjectTypes()
+        Game.Player = Player(ObjectType.ObjectTypes['player'])
         Game.Player.flipped = False
+        Object(ObjectType.ObjectTypes['block'], position=(150,450))
+        Object(ObjectType.ObjectTypes['block'], position=(500,300))
 
     def _initScreen(self):
         """
         Sets up the pygame screen.
         """
+        
         print "DEBUG: Initializing Screen"
         os.environ['SDL_VIDEO_CENTERED'] = '1'
         Game.Screen = pygame.display.set_mode((Game.ScreenWidth, Game.ScreenHeight))
@@ -153,9 +185,10 @@ class Game:
         """
         Initializes the game (doesn't do anything currently)
         """
+        
         self.frameCount = 0
         self._initScreen()
-        self._initEntities()
+        self._initObjects()
         self._initControls()
         self._start()
         print "DEBUG: Initializing Game"

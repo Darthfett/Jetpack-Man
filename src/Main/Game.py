@@ -1,9 +1,11 @@
-from Object import Object
 from Entity import Entity
-from Player import Player
+from Level import Level
+from Object import Object
 from ObjectType import ObjectType
-import pygame
+from Player import Player
 import os
+import pygame
+import math
 
 class Game:
 
@@ -17,6 +19,9 @@ class Game:
     Objects = []
     Entities = []
     Player = None
+    
+    #Levels
+    currentLevel = None
 
     #Controls
     Controls = {}
@@ -27,6 +32,8 @@ class Game:
 
 
     #Physics
+    CollisionMap = []
+    CollisionBlockSize = 1
     Gravity = .5
     
     def _drawObject(self,object):
@@ -66,8 +73,6 @@ class Game:
         Game.Player.running(Game.ControlState[Game.MoveRight], not (Game.ControlState[Game.MoveRight] == Game.ControlState[Game.MoveLeft]))
         Game.Player.jumping(Game.ControlState[Game.Jump])
         Game.Player.flying(Game.ControlState[Game.Fly])
-        
-    
 
     def _nextFrame(self):
         """
@@ -90,6 +95,16 @@ class Game:
             if (entity.position[1] + pygame.Surface.get_height(entity.currentFrame) > Game.ScreenHeight):
                 entity.position[1] = Game.ScreenHeight - pygame.Surface.get_height(entity.currentFrame)
                 entity.onLand()
+                
+            #Collision
+        
+            for entity in Entity.Entities:
+                for object in Entity.Entities + Object.Objects:
+                    if entity.detectCollision(object):
+                        if entity.position[1] < object.position[1]:
+                            entity.onLand()
+                        print entity.objectType.name + " collided with " + object.objectType.name
+            
             
             #Animation
             entity.getNextFrame()
@@ -139,6 +154,36 @@ class Game:
                 pygame.time.delay(1)
         finally:
             pygame.quit()
+            
+    def _mapObject(self,object):
+        """
+        Maps the given object into the CollisionMap
+        """
+        firstRow = object.position[0] / Game.CollisionBlockSize
+        lastRow = int(math.ceil((object.position[0] + object.objectType.width) / Game.CollisionBlockSize))
+        firstCol = object.position[1] / Game.CollisionBlockSize
+        lastCol = int(math.ceil((abs(object.position[1]) + object.objectType.height) / Game.CollisionBlockSize))
+        for row in range(firstRow,lastRow):
+            for col in range(firstCol,lastCol):
+                Game.CollisionMap[row][col].add(object)
+            
+    def _initLevel(self):
+        Game.currentLevel = Level('default',['objects.dat'])
+        
+        columnCount = int(math.ceil(Game.currentLevel.width / Game.CollisionBlockSize))
+        rowCount = int(math.ceil(Game.currentLevel.height / Game.CollisionBlockSize))
+        
+        for row in range(rowCount):
+            blocks = []
+            for col in range(columnCount):
+                blocks.append(set([]))
+            Game.CollisionMap.append(blocks)
+        
+        Game.Player = Player(ObjectType.ObjectTypes['player'],flipped=False)
+        self._mapObject(Object(ObjectType.ObjectTypes['block'], position=(150,450)))
+        self._mapObject(Object(ObjectType.ObjectTypes['block'], position=(500,300)))
+        self._mapObject(Game.Player)
+        
 
     def _initControls(self):
         """
@@ -167,10 +212,7 @@ class Game:
         
         print "DEBUG: Initializing Entities"
         ObjectType.initializeObjectTypes()
-        Game.Player = Player(ObjectType.ObjectTypes['player'])
-        Game.Player.flipped = False
-        Object(ObjectType.ObjectTypes['block'], position=(150,450))
-        Object(ObjectType.ObjectTypes['block'], position=(500,300))
+        Game.CollisionBlockSize = min(Game.ScreenHeight,Game.ScreenWidth)
 
     def _initScreen(self):
         """
@@ -190,6 +232,7 @@ class Game:
         self._initScreen()
         self._initObjects()
         self._initControls()
+        self._initLevel()
         self._start()
         print "DEBUG: Initializing Game"
         pass

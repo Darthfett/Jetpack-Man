@@ -19,9 +19,8 @@ class ObjectType:
         """
         self.width = max(self.width,animation.width)
         self.height = max(self.height,animation.height)
-        ObjectType.Width = max(ObjectType.Width,self.width)
-        ObjectType.Height = max(ObjectType.Height,self.height)
         self.animations[name] = animation
+        print self.width,self.height
 
     def __init__(self, name, idle):
         """
@@ -29,6 +28,7 @@ class ObjectType:
         """
         
         ObjectType.ObjectTypes[name] = self
+        self.name = name
         #Data
         #Animations
         self.animations = {}
@@ -70,7 +70,7 @@ class ObjectType:
                 values = line.split(':')
                 key = values.pop(0)
                 if (key == 'idle'):
-                    objectType = ObjectType(ObjectTypeName, animation)
+                    idle = animation
 
                 else:
                     animations.append(animation)
@@ -79,5 +79,7 @@ class ObjectType:
                 for val in values:
                     val = val.strip()
                     animation.add(os.path.join(dir, os.path.join(ObjectTypeName, val)))
+            objectType = ObjectType(ObjectTypeName,idle)
             for animation in animations:
-                    objectType.addAnimation(keys.pop(0), animation)
+                objectType.addAnimation(keys.pop(0), animation)
+            

@@ -69,8 +69,8 @@ class Player(Entity):
         self.isFlying = False
         self.flyCounter = 0
 
-    def __init__(self, whichType):
-        Entity.__init__(self, whichType,position=[0,0])
+    def __init__(self, whichType, position=[0,0],flipped=False):
+        Entity.__init__(self, whichType,position=position,flipped=flipped)
         self.isFalling = True
         self.isJumping = False
         self.isFlying = False

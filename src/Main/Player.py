@@ -21,7 +21,6 @@ class Player(Entity):
         
         if (not self.isFlying and isFlying and self.flyCounter <= Player.MaxFlyLength):
             self.isFlying = True
-            self.isFalling = True
             self.acceleration[1] -= Player.FlyAcceleration
         elif (self.isFlying and not isFlying):
             self.isFlying = False
@@ -37,9 +36,8 @@ class Player(Entity):
         Starts/Stops the player's jump
         """
         
-        if (isJumping and not self.isJumping and not self.isFalling):
+        if (isJumping and not self.isJumping and self.velocity[1] == 0):
             self.isJumping = True
-            self.isFalling = True
             self.velocity[1] -= Player.JumpInitialVelocity
         elif (not isJumping and self.isJumping):
             self.isJumping = False
@@ -71,7 +69,6 @@ class Player(Entity):
 
     def __init__(self, whichType, position=[0,0],flipped=False):
         Entity.__init__(self, whichType,position=position,flipped=flipped)
-        self.isFalling = True
         self.isJumping = False
         self.isFlying = False
         self.flyCounter = 0

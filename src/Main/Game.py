@@ -83,10 +83,8 @@ class Game:
 
         for entity in Entity.Entities:
             #Acceleration
-            if (entity.isFalling):
-                entity.velocity[1] += Game.Gravity
-                pass
-
+            entity.velocity[1] += Game.Gravity
+            
             #Velocity
             entity.velocity = [entity.velocity[i] + entity.acceleration[i] for i in range(len(entity.velocity))]
 
@@ -101,9 +99,7 @@ class Game:
             for entity in Entity.Entities:
                 for object in Entity.Entities + Object.Objects:
                     if entity.detectCollision(object):
-                        if entity.position[1] < object.position[1]:
-                            entity.onLand()
-                        print entity.objectType.name + " collided with " + object.objectType.name
+                        entity.onObjectCollision(object)
             
             
             #Animation

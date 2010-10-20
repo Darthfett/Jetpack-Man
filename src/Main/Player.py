@@ -14,6 +14,16 @@ class Player(Entity):
 
     MaxFlyLength = 32
 
+    MovingLeft, MovingRight, NotMoving = range(3)
+
+    def getNextFrame(self):
+        """
+        Calculates the current animation.
+        """
+        self.currentAnimation = self.objectType.animations['idle']
+        if self.moveState != Player.NotMoving:
+            self.currentAnimation = self.objectType.animations['move']
+
     def flying(self, isFlying):
         """
         Starts/Stops the player's Jetpack.        
@@ -51,11 +61,14 @@ class Player(Entity):
 
         if not isRunning:
             self.velocity[0] = 0
+            self.moveState = Player.NotMoving
         else:
             self.velocity[0] = ((Player.HorizontalMoveSpeed) if toRight else (-Player.HorizontalMoveSpeed))
             if (self.velocity[0] > 0):
+                self.moveState = Player.MovingRight
                 self.flipped = False
             elif (self.velocity[0] < 0):
+                self.moveState = Player.MovingLeft
                 self.flipped = True
 
     def onLand(self):
@@ -69,6 +82,7 @@ class Player(Entity):
 
     def __init__(self, whichType, position = [0, 0], flipped = False):
         Entity.__init__(self, whichType, position = position, flipped = flipped)
+        self.moveState = Player.NotMoving
         self.isJumping = False
         self.isFlying = False
         self.flyCounter = 0

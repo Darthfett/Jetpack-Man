@@ -11,8 +11,8 @@ class Animation:
         """
         frame = pygame.image.load(path).convert_alpha()
         self.frame.append(frame)
-        self.width = max(self.width,frame.get_width())
-        self.height = max(self.height,frame.get_height())
+        self.width = max(self.width, frame.get_width())
+        self.height = max(self.height, frame.get_height())
         return self
 
     def __init__(self, fps = 15):

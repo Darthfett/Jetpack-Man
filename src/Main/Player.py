@@ -8,17 +8,17 @@ from Entity import Entity
 
 class Player(Entity):
 
-    FlyAcceleration = 0.53
+    FlyAcceleration = 0.54
     JumpInitialVelocity = 10
     HorizontalMoveSpeed = 3
 
-    MaxFlyLength = 16
+    MaxFlyLength = 32
 
     def flying(self, isFlying):
         """
         Starts/Stops the player's Jetpack.        
         """
-        
+
         if (not self.isFlying and isFlying and self.flyCounter <= Player.MaxFlyLength):
             self.isFlying = True
             self.acceleration[1] -= Player.FlyAcceleration
@@ -35,7 +35,7 @@ class Player(Entity):
         """
         Starts/Stops the player's jump
         """
-        
+
         if (isJumping and not self.isJumping and self.velocity[1] == 0):
             self.isJumping = True
             self.velocity[1] -= Player.JumpInitialVelocity
@@ -48,7 +48,7 @@ class Player(Entity):
         """
         Starts/Stops the player's horizontal movement.
         """
-        
+
         if not isRunning:
             self.velocity[0] = 0
         else:
@@ -67,8 +67,8 @@ class Player(Entity):
         self.isFlying = False
         self.flyCounter = 0
 
-    def __init__(self, whichType, position=[0,0],flipped=False):
-        Entity.__init__(self, whichType,position=position,flipped=flipped)
+    def __init__(self, whichType, position = [0, 0], flipped = False):
+        Entity.__init__(self, whichType, position = position, flipped = flipped)
         self.isJumping = False
         self.isFlying = False
         self.flyCounter = 0

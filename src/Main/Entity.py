@@ -37,7 +37,7 @@ class Entity(Object):
         elif self.velocity[0] > 0:
             vxDiff = object.position[0] - (self.position[0] + self.objectType.width)
         else:
-            self.position[1] = (object.position[1] + object.objectType.height) if (self.velocity[1] < 0) else (object.position[1] - self.objectType.height)
+            self.position[1] = (object.position[1] + object.objectType.height + 1) if (self.velocity[1] < 0) else (object.position[1] - self.objectType.height - 1)
             if self.velocity[1] > 0:
                 self.onLand()
             self.velocity[1] = 0
@@ -48,7 +48,7 @@ class Entity(Object):
         elif self.velocity[1] < 0:
             vyDiff = (object.position[1] + object.objectType.height) - self.position[1]
         else:
-            self.position[0] += vxDiff
+            self.position[0] += vxDiff + math.copysign(1, vxDiff)
             return
 
         if (abs(vyDiff / self.velocity[1]) > abs(vxDiff / self.velocity[0])):

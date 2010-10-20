@@ -19,7 +19,7 @@ class Game:
     Objects = []
     Entities = []
     Player = None
-    
+
     #Levels
     currentLevel = None
 
@@ -35,12 +35,12 @@ class Game:
     CollisionMap = []
     CollisionBlockSize = 1
     Gravity = .5
-    
-    def _drawObject(self,object):
+
+    def _drawObject(self, object):
         """
         Draws the given object to the screen
         """
-        
+
         object.currentFrame = object.currentAnimation.frame[(self.frameCount * object.currentAnimation.fps / Game.FPSLimit) % len(object.currentAnimation.frame)]
         if object.flipped:
             object.currentFrame = pygame.transform.flip(object.currentFrame, 1, 0)
@@ -50,16 +50,16 @@ class Game:
         """
         Draws the current frame to the screen
         """
-        
+
         Game.Screen.fill((0, 0, 0))
         for object in Object.Objects:
             self._drawObject(object)
-            
+
         for entity in Entity.Entities:
             self._drawObject(entity)
-            
+
         self._drawObject(Game.Player)
-            
+
 
     def handleInput(self):
         """
@@ -69,7 +69,7 @@ class Game:
             MoveLeft, MoveRight, Jump, Duck, Fly.
         
         """
-        
+
         Game.Player.running(Game.ControlState[Game.MoveRight], not (Game.ControlState[Game.MoveRight] == Game.ControlState[Game.MoveLeft]))
         Game.Player.jumping(Game.ControlState[Game.Jump])
         Game.Player.flying(Game.ControlState[Game.Fly])
@@ -78,13 +78,13 @@ class Game:
         """
         Computes the current frame of the game
         """
-        
+
         self.handleInput()
 
         for entity in Entity.Entities:
             #Acceleration
             entity.velocity[1] += Game.Gravity
-            
+
             #Velocity
             entity.velocity = [entity.velocity[i] + entity.acceleration[i] for i in range(len(entity.velocity))]
 
@@ -93,15 +93,15 @@ class Game:
             if (entity.position[1] + pygame.Surface.get_height(entity.currentFrame) > Game.ScreenHeight):
                 entity.position[1] = Game.ScreenHeight - pygame.Surface.get_height(entity.currentFrame)
                 entity.onLand()
-                
+
             #Collision
-        
+
             for entity in Entity.Entities:
                 for object in Entity.Entities + Object.Objects:
                     if entity.detectCollision(object):
                         entity.onObjectCollision(object)
-            
-            
+
+
             #Animation
             entity.getNextFrame()
 
@@ -109,7 +109,7 @@ class Game:
         """
         Quits the game (specifically when a user decides to)        
         """
-        
+
         print "User Quit"
         raise Exception("UserQuitException")
 
@@ -117,7 +117,7 @@ class Game:
         """        
         Handles all keyboard events        
         """
-        
+
         pygame.event.pump()
         keyboardState = pygame.key.get_pressed()
         for key in Game.BoundControls:
@@ -131,7 +131,7 @@ class Game:
         Main loop
         Handles keyboard/mouse events        
         """
-        
+
         print "DEBUG: Starting Game"
         nextFrameTime = 0
         deltaFrameTime = 1000 / Game.FPSLimit
@@ -150,8 +150,8 @@ class Game:
                 pygame.time.delay(1)
         finally:
             pygame.quit()
-            
-    def _mapObject(self,object):
+
+    def _mapObject(self, object):
         """
         Maps the given object into the CollisionMap
         """
@@ -159,33 +159,34 @@ class Game:
         lastRow = int(math.ceil((object.position[0] + object.objectType.width) / Game.CollisionBlockSize))
         firstCol = object.position[1] / Game.CollisionBlockSize
         lastCol = int(math.ceil((abs(object.position[1]) + object.objectType.height) / Game.CollisionBlockSize))
-        for row in range(firstRow,lastRow):
-            for col in range(firstCol,lastCol):
+        for row in range(firstRow, lastRow):
+            for col in range(firstCol, lastCol):
                 Game.CollisionMap[row][col].add(object)
-            
+
     def _initLevel(self):
-        Game.currentLevel = Level('default',['objects.dat'])
-        
+        Game.currentLevel = Level('default', ['objects.dat'])
+
         columnCount = int(math.ceil(Game.currentLevel.width / Game.CollisionBlockSize))
         rowCount = int(math.ceil(Game.currentLevel.height / Game.CollisionBlockSize))
-        
+
         for row in range(rowCount):
             blocks = []
             for col in range(columnCount):
                 blocks.append(set([]))
             Game.CollisionMap.append(blocks)
-        
-        Game.Player = Player(ObjectType.ObjectTypes['player'],flipped=False)
-        self._mapObject(Object(ObjectType.ObjectTypes['block'], position=(150,450)))
-        self._mapObject(Object(ObjectType.ObjectTypes['block'], position=(500,300)))
+
+        Game.Player = Player(ObjectType.ObjectTypes['player'], flipped = False)
+        self._mapObject(Object(ObjectType.ObjectTypes['block'], position = (150, 450)))
+        self._mapObject(Object(ObjectType.ObjectTypes['block'], position = (500, 300)))
+        self._mapObject(Object(ObjectType.ObjectTypes['block'], position = (600, 520)))
         self._mapObject(Game.Player)
-        
+
 
     def _initControls(self):
         """
         Sets up the controls for MoveLeft,MoveRight,Jump,Duck,Fly,Quit
         """
-        
+
         print "DEBUG: Initializing Controls"
         Game.Controls[pygame.K_a] = Game.MoveLeft
         Game.Controls[pygame.K_d] = Game.MoveRight
@@ -205,16 +206,16 @@ class Game:
         """
         Sets up the Objects and loads the Objects into memory.  Also creates the player.
         """
-        
+
         print "DEBUG: Initializing Entities"
         ObjectType.initializeObjectTypes()
-        Game.CollisionBlockSize = min(Game.ScreenHeight,Game.ScreenWidth)
+        Game.CollisionBlockSize = min(Game.ScreenHeight, Game.ScreenWidth)
 
     def _initScreen(self):
         """
         Sets up the pygame screen.
         """
-        
+
         print "DEBUG: Initializing Screen"
         os.environ['SDL_VIDEO_CENTERED'] = '1'
         Game.Screen = pygame.display.set_mode((Game.ScreenWidth, Game.ScreenHeight))
@@ -223,7 +224,7 @@ class Game:
         """
         Initializes the game (doesn't do anything currently)
         """
-        
+
         self.frameCount = 0
         self._initScreen()
         self._initObjects()

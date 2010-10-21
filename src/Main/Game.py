@@ -90,9 +90,9 @@ class Game:
 
             #Position
             entity.position = [entity.position[i] + entity.velocity[i] for i in range(len(entity.position))]
-            if (entity.position[1] + pygame.Surface.get_height(entity.currentFrame) > Game.ScreenHeight):
-                entity.position[1] = Game.ScreenHeight - pygame.Surface.get_height(entity.currentFrame)
-                entity.onLand()
+            if (entity.position[1] > Game.ScreenHeight):
+                entity.position = Game.currentLevel.start
+                entity.velocity[1] = 0
 
             #Collision
 
@@ -176,11 +176,13 @@ class Game:
             Game.CollisionMap.append(blocks)
 
         Game.Player = Player(ObjectType.ObjectTypes['player'], flipped = False)
+        self._mapObject(Object(ObjectType.ObjectTypes['block'], position = (0, 512)))
         self._mapObject(Object(ObjectType.ObjectTypes['block'], position = (150, 450)))
         self._mapObject(Object(ObjectType.ObjectTypes['block'], position = (500, 300)))
         self._mapObject(Object(ObjectType.ObjectTypes['block'], position = (600, 520)))
         self._mapObject(Game.Player)
-
+        Game.Player.objectType.width -= 1
+        Game.Player.objectType.height -= 2
 
     def _initControls(self):
         """

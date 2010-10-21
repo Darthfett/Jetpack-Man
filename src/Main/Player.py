@@ -8,11 +8,11 @@ from Entity import Entity
 
 class Player(Entity):
 
-    FlyAcceleration = 0.54
+    FlyAcceleration = 0.52
     JumpInitialVelocity = 10
     HorizontalMoveSpeed = 3
 
-    MaxFlyLength = 32
+    MaxFlyLength = 16
 
     MovingLeft, MovingRight, NotMoving = range(3)
 

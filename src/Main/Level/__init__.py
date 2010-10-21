@@ -10,9 +10,10 @@ class Level:
     
     Levels = {}
     
-    def __init__(self,name,objects,width=800,height=600):
+    def __init__(self,name,objects,width=800,height=600,start=[80,0]):
         Level.Levels[name]=self
         self.name = name
+        self.start = start
         self.objects = objects
         self.width = width
         self.height = height

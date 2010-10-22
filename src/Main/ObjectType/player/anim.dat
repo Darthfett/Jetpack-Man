@@ -3,4 +3,4 @@
 idle: idle.png
 #
 # move: east, ne, n, nw, w, sw, s, se
-move: e1.png,e2.png,e3.png,e4.png,e5.png,e6.png,e7.png,e8.png,e9.png
+move: run1.png,run2.png,run3.png,run4.png,run5.png,run6.png,run7.png,run8.png,run9.png

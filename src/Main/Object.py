@@ -7,8 +7,8 @@ from Main.ObjectType import ObjectType
 
 class Object:
     Objects = []
-    
-    def detectCollision(self,object):
+
+    def detectCollision(self, object):
         if self == object:
             return False
         selfMinX = self.position[0]
@@ -26,20 +26,21 @@ class Object:
         """
         Calculates the current animation.
         """
-        
+
         self.currentAnimation = self.objectType.animations['idle']
 
         return self.currentAnimation.frame[0]
 
-    def __init__(self, whichType, position = [0, 0],flipped = False):
+    def __init__(self, whichType, position = [0, 0], flipped = False, draw = True):
         """
         Creates a basic Entity of a specific type.
         """
-        
+
         Object.Objects.append(self)
         self.flipped = flipped
 
         self.position = position
+        self.draw = draw
 
         self.objectType = whichType
         self.currentAnimation = self.objectType.animations['idle']

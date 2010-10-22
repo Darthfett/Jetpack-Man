@@ -44,7 +44,8 @@ class Game:
         object.currentFrame = object.currentAnimation.frame[(self.frameCount * object.currentAnimation.fps / Game.FPSLimit) % len(object.currentAnimation.frame)]
         if object.flipped:
             object.currentFrame = pygame.transform.flip(object.currentFrame, 1, 0)
-        Game.Screen.blit(object.currentFrame, object.position)
+        if object.draw:
+            Game.Screen.blit(object.currentFrame, object.position)
 
     def _drawFrame(self):
         """

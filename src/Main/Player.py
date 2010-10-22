@@ -8,11 +8,11 @@ from Entity import Entity
 
 class Player(Entity):
 
-    FlyAcceleration = 0.52
-    JumpInitialVelocity = 10
+    FlyAcceleration = 0.51
+    JumpInitialVelocity = 9
     HorizontalMoveSpeed = 3
 
-    MaxFlyLength = 16
+    MaxFlyLength = 64
 
     MovingLeft, MovingRight, NotMoving = range(3)
 
@@ -20,6 +20,8 @@ class Player(Entity):
         """
         Calculates the current animation.
         """
+        if self.blink:
+            self.draw = not self.draw
         self.currentAnimation = self.objectType.animations['idle']
         if self.moveState != Player.NotMoving:
             self.currentAnimation = self.objectType.animations['move']
@@ -36,7 +38,8 @@ class Player(Entity):
             self.isFlying = False
             self.acceleration[1] += Player.FlyAcceleration
         elif (self.isFlying and isFlying):
-            self.flyCounter += 1
+            print abs(self.velocity[1] / 16)
+            self.flyCounter += 0.5 + abs(min(0, self.velocity[1] / 2))
             if self.flyCounter > Player.MaxFlyLength:
                 self.isFlying = False
                 self.acceleration[1] += Player.FlyAcceleration
@@ -80,8 +83,9 @@ class Player(Entity):
         self.isFlying = False
         self.flyCounter = 0
 
-    def __init__(self, whichType, position = [0, 0], flipped = False):
+    def __init__(self, whichType, position = [0, 0], flipped = False, blink = False):
         Entity.__init__(self, whichType, position = position, flipped = flipped)
+        self.blink = blink
         self.moveState = Player.NotMoving
         self.isJumping = False
         self.isFlying = False

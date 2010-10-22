@@ -38,7 +38,6 @@ class Player(Entity):
             self.isFlying = False
             self.acceleration[1] += Player.FlyAcceleration
         elif (self.isFlying and isFlying):
-            print abs(self.velocity[1] / 16)
             self.flyCounter += 0.5 + abs(min(0, self.velocity[1] / 2))
             if self.flyCounter > Player.MaxFlyLength:
                 self.isFlying = False

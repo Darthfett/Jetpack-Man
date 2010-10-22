@@ -6,6 +6,7 @@ from Player import Player
 import os
 import pygame
 import math
+import random
 
 class Game:
 
@@ -81,6 +82,22 @@ class Game:
 
         self.handleInput()
 
+        for obj in Object.Objects:
+            if random.randint(1,50) == 2:
+                obj.velX = random.randint(-5, 5)
+                obj.velY = random.randint(-5, 5)
+            obj.position[0] += obj.velX
+            obj.position[1] += obj.velY
+
+            if obj.position[0] > 600:
+                obj.velX = -5
+            if obj.position[1] > 600:
+                obj.velY = -5
+            if obj.position[0] < 0:
+                obj.velX = 5
+            if obj.position[1] < 100:
+                obj.velY = 5
+
         for entity in Entity.Entities:
             #Acceleration
             entity.velocity[1] += Game.Gravity
@@ -135,6 +152,9 @@ class Game:
         print "DEBUG: Starting Game"
         nextFrameTime = 0
         deltaFrameTime = 1000 / Game.FPSLimit
+        for obj in Object.Objects:
+            obj.velX = random.randint(-5, 5)
+            obj.velY = random.randint(-5, 5)
         try:
             while True:
                 self._handleEvents()

@@ -4,6 +4,7 @@ An Object is an object that is drawn to the screen.
 It can have animations, position, and size.
 """
 from Main.ObjectType import ObjectType
+import random
 
 class Object:
     Objects = []
@@ -31,7 +32,7 @@ class Object:
 
         return self.currentAnimation.frame[0]
 
-    def __init__(self, whichType, position = [0, 0],flipped = False):
+    def __init__(self, whichType, position = None,flipped = False):
         """
         Creates a basic Entity of a specific type.
         """
@@ -39,7 +40,7 @@ class Object:
         Object.Objects.append(self)
         self.flipped = flipped
 
-        self.position = position
+        self.position = [random.randint(0, 400), random.randint(0, 400)]
 
         self.objectType = whichType
         self.currentAnimation = self.objectType.animations['idle']

@@ -136,6 +136,7 @@ class Game:
         print "DEBUG: Starting Game"
         nextFrameTime = 0
         deltaFrameTime = 1000 / Game.FPSLimit
+
         try:
             while True:
                 self._handleEvents()

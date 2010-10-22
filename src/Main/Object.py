@@ -38,7 +38,6 @@ class Object:
 
         Object.Objects.append(self)
         self.flipped = flipped
-
         self.position = position
         self.draw = draw
 

@@ -20,7 +20,6 @@ class ObjectType:
         self.width = max(self.width,animation.width)
         self.height = max(self.height,animation.height)
         self.animations[name] = animation
-        print self.width,self.height
 
     def __init__(self, name, idle):
         """

@@ -25,6 +25,8 @@ class Player(Entity):
         self.currentAnimation = self.objectType.animations['idle']
         if self.moveState != Player.NotMoving:
             self.currentAnimation = self.objectType.animations['move']
+        if self.isFlying:
+            self.currentAnimation = self.objectType.animations['fly']
 
     def flying(self, isFlying):
         """

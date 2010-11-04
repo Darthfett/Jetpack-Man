@@ -10,7 +10,8 @@ class Player(Entity):
 
     FlyAcceleration = 0.51
     JumpInitialVelocity = 9
-    HorizontalMoveSpeed = 3
+    HorizontalMoveSpeed = 1
+    MaxHorizontalMoveSpeed = 3
 
     MaxFlyLength = 64
 
@@ -64,16 +65,20 @@ class Player(Entity):
         """
 
         if not isRunning:
-            self.velocity[0] = 0
+            if self.velocity[0] != 0 and abs(self.velocity[0]) < Player.HorizontalMoveSpeed:
+                self.velocity[0] = 0
+            elif self.velocity[0] >= Player.HorizontalMoveSpeed:
+                self.velocity[0] -= Player.HorizontalMoveSpeed
+            elif abs(self.velocity[0]) >= Player.HorizontalMoveSpeed:
+                self.velocity[0] += Player.HorizontalMoveSpeed
             self.moveState = Player.NotMoving
         else:
-            self.velocity[0] = ((Player.HorizontalMoveSpeed) if toRight else (-Player.HorizontalMoveSpeed))
-            if (self.velocity[0] > 0):
-                self.moveState = Player.MovingRight
-                self.flipped = False
-            elif (self.velocity[0] < 0):
-                self.moveState = Player.MovingLeft
-                self.flipped = True
+            if toRight:
+                self.velocity[0] = min(self.velocity[0] + Player.HorizontalMoveSpeed,Player.MaxHorizontalMoveSpeed)
+            else:
+                self.velocity[0] = max(self.velocity[0] - Player.HorizontalMoveSpeed,-Player.MaxHorizontalMoveSpeed)
+            self.flipped = not toRight
+            self.moveState = Player.MovingRight if toRight else Player.MovingLeft
 
     def onLand(self):
         """

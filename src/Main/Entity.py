@@ -10,7 +10,8 @@ import math
 class Entity(Object):
     Entities = []
 
-    horizontalCollision, verticalCollision = range(2)
+    LeftCollision, RightCollision, TopCollision, BottomCollision = range(4)
+    CollidingLeft, CollidingRight, NotColliding = range(3)
 
     def getNextFrame(self):
         """
@@ -40,7 +41,7 @@ class Entity(Object):
             vxDiff = object.position[0] - (self.position[0] + self.objectType.width)
         else:
             self.position[1] = (object.position[1] + object.objectType.height + 1) if (self.velocity[1] < 0) else (object.position[1] - self.objectType.height - 1)
-            return Entity.verticalCollision
+            return Entity.BottomCollision if self.velocity[1] < 0 else Entity.TopCollision
 
         if self.velocity[1] > 0:
             vyDiff = object.position[1] - (self.position[1] + self.objectType.height)
@@ -48,31 +49,32 @@ class Entity(Object):
             vyDiff = (object.position[1] + object.objectType.height) - self.position[1]
         else:
             self.position[0] += vxDiff + math.copysign(1, vxDiff)
-            return Entity.horizontalCollision
+            return Entity.LeftCollision if vxDiff > 0 else Entity.RightCollision
 
         if (abs(vyDiff / self.velocity[1]) > abs(vxDiff / self.velocity[0])):
             self.position[0] += vxDiff + math.copysign(1, vxDiff)
-            return Entity.horizontalCollision
+            return Entity.LeftCollision if vxDiff > 0 else Entity.RightCollision
         else:
             self.position[1] += vyDiff + math.copysign(1, vyDiff)
-            return Entity.verticalCollision
+            return Entity.BottomCollision if vyDiff > 0 else Entity.TopCollision
 
 
     def colliding(self, isColliding, object):
         if isColliding:
             collisionType = self.onObjectCollision(object)
-            if collisionType == Entity.verticalCollision:
-                if self.velocity[1] > 0:
-                    self.velocity[1] = 0
-                    self.onLand()
+            if collisionType == Entity.BottomCollision or collisionType == Entity.TopCollision:
+                self.wallSliding = False
+                self.collideState = Entity.NotColliding
             else:
-                self.velocity[1] = 0
                 self.wallSliding = True
-                self.onLand()
+                self.collideState = Entity.CollidingLeft if collisionType == Entity.LeftCollision else Entity.CollidingRight
+            self.onLand()
         else:
+            #self.collideState = Entity.NotColliding
             self.wallSliding = False
+            pass
 
-    def __init__(self, whichType, wallSliding = False, position = [0, 0], velocity = [0, 0], acceleration = [0, 0], flipped = False):
+    def __init__(self, whichType, wallSliding = False, position = [0, 0], velocity = [0, 0], acceleration = [0, 0], flipped = False, collideState = NotColliding):
         """
         Creates a basic Entity of a specific type.
         """
@@ -83,3 +85,5 @@ class Entity(Object):
         self.wallSliding = wallSliding
         self.velocity = velocity
         self.acceleration = acceleration
+        
+        self.collideState = collideState

@@ -35,7 +35,7 @@ class Game:
     CollisionMap = []
     CollisionBlockSize = 1
     Gravity = .5
-    maxSlideSpeed = 5
+    maxSlideSpeed = 40
 
     def _drawObject(self, object):
         """
@@ -90,9 +90,6 @@ class Game:
             #Velocity
             entity.velocity = [entity.velocity[i] + entity.acceleration[i] for i in range(len(entity.velocity))]
 
-            if entity.wallSliding:
-                if entity.velocity[1] > Game.maxSlideSpeed:
-                    entity.velocity[1] = Game.maxSlideSpeed
             #Position
             entity.position = [entity.position[i] + entity.velocity[i] for i in range(len(entity.position))]
             if (entity.position[1] > Game.ScreenHeight):
@@ -104,6 +101,12 @@ class Game:
             for entity in Entity.Entities:
                 for object in Entity.Entities + Object.Objects:
                     entity.colliding(entity.detectCollision(object), object)
+                    
+            
+            if entity.wallSliding:
+                print entity.velocity[1],Game.maxSlideSpeed
+                if entity.velocity[1] > Game.maxSlideSpeed:
+                    entity.velocity[1] = Game.maxSlideSpeed
 
             #Animation
             entity.getNextFrame()

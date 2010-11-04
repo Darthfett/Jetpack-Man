@@ -35,6 +35,7 @@ class Game:
     CollisionMap = []
     CollisionBlockSize = 1
     Gravity = .5
+    maxSlideSpeed = 5
 
     def _drawObject(self, object):
         """
@@ -89,6 +90,9 @@ class Game:
             #Velocity
             entity.velocity = [entity.velocity[i] + entity.acceleration[i] for i in range(len(entity.velocity))]
 
+            if entity.wallSliding:
+                if entity.velocity[1] > Game.maxSlideSpeed:
+                    entity.velocity[1] = Game.maxSlideSpeed
             #Position
             entity.position = [entity.position[i] + entity.velocity[i] for i in range(len(entity.position))]
             if (entity.position[1] > Game.ScreenHeight):
@@ -99,9 +103,7 @@ class Game:
 
             for entity in Entity.Entities:
                 for object in Entity.Entities + Object.Objects:
-                    if entity.detectCollision(object):
-                        entity.onObjectCollision(object)
-
+                    entity.colliding(entity.detectCollision(object), object)
 
             #Animation
             entity.getNextFrame()
@@ -180,6 +182,8 @@ class Game:
         Game.Player = Player(ObjectType.ObjectTypes['player'], flipped = False)
         self._mapObject(Object(ObjectType.ObjectTypes['block'], position = (0, 512)))
         self._mapObject(Object(ObjectType.ObjectTypes['block'], position = (150, 450)))
+        self._mapObject(Object(ObjectType.ObjectTypes['block'], position = (150, 450 - 88)))
+        self._mapObject(Object(ObjectType.ObjectTypes['block'], position = (150, 450 - 176)))
         self._mapObject(Object(ObjectType.ObjectTypes['block'], position = (500, 300)))
         self._mapObject(Object(ObjectType.ObjectTypes['block'], position = (600, 520)))
         self._mapObject(Game.Player)

@@ -10,6 +10,8 @@ import math
 class Entity(Object):
     Entities = []
 
+    horizontalCollision, verticalCollision = range(2)
+
     def getNextFrame(self):
         """
         Calculates the current animation.
@@ -38,10 +40,7 @@ class Entity(Object):
             vxDiff = object.position[0] - (self.position[0] + self.objectType.width)
         else:
             self.position[1] = (object.position[1] + object.objectType.height + 1) if (self.velocity[1] < 0) else (object.position[1] - self.objectType.height - 1)
-            if self.velocity[1] > 0:
-                self.onLand()
-            self.velocity[1] = 0
-            return
+            return Entity.verticalCollision
 
         if self.velocity[1] > 0:
             vyDiff = object.position[1] - (self.position[1] + self.objectType.height)
@@ -49,20 +48,31 @@ class Entity(Object):
             vyDiff = (object.position[1] + object.objectType.height) - self.position[1]
         else:
             self.position[0] += vxDiff + math.copysign(1, vxDiff)
-            return
+            return Entity.horizontalCollision
 
         if (abs(vyDiff / self.velocity[1]) > abs(vxDiff / self.velocity[0])):
-            self.velocity[0] = 0
             self.position[0] += vxDiff + math.copysign(1, vxDiff)
+            return Entity.horizontalCollision
         else:
             self.position[1] += vyDiff + math.copysign(1, vyDiff)
-            if self.velocity[1] > 0:
+            return Entity.verticalCollision
+
+
+    def colliding(self, isColliding, object):
+        if isColliding:
+            collisionType = self.onObjectCollision(object)
+            if collisionType == Entity.verticalCollision:
+                if self.velocity[1] > 0:
+                    self.velocity[1] = 0
+                    self.onLand()
+            else:
+                self.velocity[1] = 0
+                self.wallSliding = True
                 self.onLand()
-            self.velocity[1] = 0
+        else:
+            self.wallSliding = False
 
-
-
-    def __init__(self, whichType, position = [0, 0], velocity = [0, 0], acceleration = [0, 0], flipped = False):
+    def __init__(self, whichType, wallSliding = False, position = [0, 0], velocity = [0, 0], acceleration = [0, 0], flipped = False):
         """
         Creates a basic Entity of a specific type.
         """
@@ -70,5 +80,6 @@ class Entity(Object):
         Entity.Entities.append(self)
         Object.Objects.pop(-1)
 
+        self.wallSliding = wallSliding
         self.velocity = velocity
         self.acceleration = acceleration

@@ -10,8 +10,8 @@ class Player(Entity):
 
     FlyAcceleration = 0.51
     JumpInitialVelocity = 9
-    HorizontalMoveSpeed = 1
-    MaxHorizontalMoveSpeed = 3
+    HorizontalMoveSpeed = 0.7
+    MaxHorizontalMoveSpeed = 4
 
     MaxFlyLength = 64
 

@@ -10,9 +10,9 @@ class Player(Entity):
 
     FlyAcceleration = 0.51
     JumpInitialVelocity = 9
-    HorizontalMoveSpeed = 0.15
-    MaxHorizontalMoveSpeed = 4.5
-    WallJumpRepelSpeed = 3
+    HorizontalMoveSpeed = 1
+    MaxHorizontalMoveSpeed = 4
+    WallJumpRepelSpeed = 8
 
     MaxFlyLength = 64
 
@@ -80,9 +80,9 @@ class Player(Entity):
             self.collideState = Entity.NotColliding
         else:
             if toRight:
-                self.velocity[0] = min(self.velocity[0] + Player.HorizontalMoveSpeed,Player.MaxHorizontalMoveSpeed)
+                self.velocity[0] = min(self.velocity[0] + Player.HorizontalMoveSpeed, Player.MaxHorizontalMoveSpeed)
             else:
-                self.velocity[0] = max(self.velocity[0] - Player.HorizontalMoveSpeed,-Player.MaxHorizontalMoveSpeed)
+                self.velocity[0] = max(self.velocity[0] - Player.HorizontalMoveSpeed, -Player.MaxHorizontalMoveSpeed)
             self.flipped = not toRight
             self.moveState = Player.MovingRight if toRight else Player.MovingLeft
 

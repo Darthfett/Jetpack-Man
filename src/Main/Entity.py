@@ -67,6 +67,7 @@ class Entity(Object):
                 self.collideState = Entity.NotColliding
             else:
                 self.wallSliding = True
+                self.velocity[0] = 0
                 self.collideState = Entity.CollidingLeft if collisionType == Entity.LeftCollision else Entity.CollidingRight
             self.onLand()
         else:
@@ -85,5 +86,5 @@ class Entity(Object):
         self.wallSliding = wallSliding
         self.velocity = velocity
         self.acceleration = acceleration
-        
+
         self.collideState = collideState

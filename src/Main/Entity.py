@@ -27,7 +27,6 @@ class Entity(Object):
         """
         Called upon landing on an object
         """
-        self.velocity[1] = 0
         self.acceleration[1] = 0
         pass
 
@@ -61,10 +60,12 @@ class Entity(Object):
 
     def colliding(self, isColliding, object):
         if isColliding:
+            self.collisionDetected = True
             collisionType = self.onObjectCollision(object)
             if collisionType == Entity.BottomCollision or collisionType == Entity.TopCollision:
                 self.wallSliding = False
                 self.collideState = Entity.NotColliding
+                self.velocity[1] = 0
             else:
                 self.wallSliding = True
                 self.velocity[0] = 0
@@ -72,7 +73,8 @@ class Entity(Object):
             self.onLand()
         else:
             #self.collideState = Entity.NotColliding
-            self.wallSliding = False
+            if not self.collisionDetected:
+                self.wallSliding = False
             pass
 
     def __init__(self, whichType, wallSliding = False, position = [0, 0], velocity = [0, 0], acceleration = [0, 0], flipped = False, collideState = NotColliding):
@@ -88,3 +90,4 @@ class Entity(Object):
         self.acceleration = acceleration
 
         self.collideState = collideState
+        self.collisionDetected = False

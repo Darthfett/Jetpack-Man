@@ -35,7 +35,7 @@ class Game:
     CollisionMap = []
     CollisionBlockSize = 1
     Gravity = .5
-    maxSlideSpeed = 40
+    maxSlideSpeed = 1
 
     def _drawObject(self, object):
         """
@@ -99,12 +99,11 @@ class Game:
             #Collision
 
             for entity in Entity.Entities:
+                entity.collisionDetected = False
                 for object in Entity.Entities + Object.Objects:
                     entity.colliding(entity.detectCollision(object), object)
-                    
-            
+
             if entity.wallSliding:
-                print entity.velocity[1],Game.maxSlideSpeed
                 if entity.velocity[1] > Game.maxSlideSpeed:
                     entity.velocity[1] = Game.maxSlideSpeed
 

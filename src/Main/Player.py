@@ -52,7 +52,7 @@ class Player(Entity):
         Starts/Stops the player's jump
         """
 
-        if (isJumping and (self.wallSliding or (not self.isJumping and self.velocity[1] == 0))):
+        if (isJumping and (self.wallSliding or not self.isJumping and self.velocity[1] == 0)):
             self.isJumping = True
             self.velocity[1] -= Player.JumpInitialVelocity
             if self.collideState == Entity.CollidingLeft:
@@ -83,7 +83,7 @@ class Player(Entity):
                 self.velocity[0] = min(self.velocity[0] + Player.HorizontalMoveSpeed, Player.MaxHorizontalMoveSpeed)
             else:
                 self.velocity[0] = max(self.velocity[0] - Player.HorizontalMoveSpeed, -Player.MaxHorizontalMoveSpeed)
-            self.flipped = not toRight
+            self.flipped = toRight if self.wallSliding else not toRight
             self.moveState = Player.MovingRight if toRight else Player.MovingLeft
 
     def onLand(self):

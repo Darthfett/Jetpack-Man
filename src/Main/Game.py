@@ -105,10 +105,14 @@ class Game:
         for entity in Entity.Entities:
             for object in Entity.Entities + Object.Objects:
                 entity.colliding(entity.detectCollision(object), object)
-
+        
         if entity.wallSliding:
             if entity.velocity[1] > Game.maxSlideSpeed:
                 entity.velocity[1] = Game.maxSlideSpeed
+        if entity.collidingLeft or entity.collidingRight:
+            entity.velocity[0] = 0
+        if entity.collidingTop or entity.collidingBottom:
+            entity.velocity[1] = 0
 
         #Animation
         for entity in Entity.Entities:

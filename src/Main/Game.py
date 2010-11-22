@@ -95,19 +95,23 @@ class Game:
             if (entity.position[1] > Game.ScreenHeight):
                 entity.position = Game.currentLevel.start
                 entity.velocity[1] = 0
+            
+            entity.wallSliding = False
+            entity.collideState = Entity.NotColliding
 
-            #Collision
+        #Collision
+        entity.collidingLeft,entity.collidingRight,entity.collidingTop,entity.collidingBottom = [False]*4
+        
+        for entity in Entity.Entities:
+            for object in Entity.Entities + Object.Objects:
+                entity.colliding(entity.detectCollision(object), object)
 
-            for entity in Entity.Entities:
-                entity.collisionDetected = False
-                for object in Entity.Entities + Object.Objects:
-                    entity.colliding(entity.detectCollision(object), object)
+        if entity.wallSliding:
+            if entity.velocity[1] > Game.maxSlideSpeed:
+                entity.velocity[1] = Game.maxSlideSpeed
 
-            if entity.wallSliding:
-                if entity.velocity[1] > Game.maxSlideSpeed:
-                    entity.velocity[1] = Game.maxSlideSpeed
-
-            #Animation
+        #Animation
+        for entity in Entity.Entities:
             entity.getNextFrame()
 
     def _quit(self):

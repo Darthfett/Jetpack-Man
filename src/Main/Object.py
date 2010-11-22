@@ -19,7 +19,7 @@ class Object:
         objectMinY = abs(object.position[1])
         objectMaxX = object.position[0] + object.objectType.width
         objectMaxY = abs(object.position[1] + object.objectType.height)
-        return not (selfMaxX < objectMinX or selfMinX > objectMaxX or selfMaxY < objectMinY or selfMinY > objectMaxY)
+        return not (selfMaxX <= objectMinX or selfMinX >= objectMaxX or selfMaxY <= objectMinY or selfMinY >= objectMaxY)
 
 
     def getNextFrame(self):

@@ -39,7 +39,10 @@ class Entity(Object):
         elif self.velocity[0] > 0:
             vxDiff = object.position[0] - (self.position[0] + self.objectType.width)
         else:
-            self.position[1] = (object.position[1] + object.objectType.height + 1) if (self.velocity[1] < 0) else (object.position[1] - self.objectType.height - 1)
+            self.position[1] = (object.position[1] + object.objectType.height) if (self.velocity[1] < 0) else (object.position[1] - self.objectType.height)
+            if self.detectCollision(object):
+                print self,"is still colliding with",object,"" + " top" if self.velocity[1] > 0 else " bottom"
+                
             return Entity.BottomCollision if self.velocity[1] < 0 else Entity.TopCollision
 
         if self.velocity[1] > 0:
@@ -47,15 +50,20 @@ class Entity(Object):
         elif self.velocity[1] < 0:
             vyDiff = (object.position[1] + object.objectType.height) - self.position[1]
         else:
-            self.position[0] += vxDiff + math.copysign(1, vxDiff)
+            self.position[0] += vxDiff
+            if self.detectCollision(object):
+                print self,"is still colliding with",object,"" + " right" if vxDiff > 0 else " left"
             return Entity.LeftCollision if vxDiff > 0 else Entity.RightCollision
 
         if (abs(vyDiff / self.velocity[1]) > abs(vxDiff / self.velocity[0])):
-            self.position[0] += vxDiff + math.copysign(1, vxDiff)
+            self.position[0] += vxDiff
+            if self.detectCollision(object):
+                print self,"is still colliding with",object,"" + " right" if vxDiff > 0 else " left"
             return Entity.LeftCollision if vxDiff > 0 else Entity.RightCollision
         else:
-            self.position[1] += vyDiff + math.copysign(1, vyDiff)
-            return Entity.BottomCollision if vyDiff > 0 else Entity.TopCollision
+            self.position[1] += vyDiff
+            if self.detectCollision(object):
+                print self,"is still colliding with",object,"" + " top" if self.velocity[1] > 0 else " bottom"
 
 
     def colliding(self, isColliding, object):

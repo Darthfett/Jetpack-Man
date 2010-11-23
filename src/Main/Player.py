@@ -84,10 +84,14 @@ class Player(Entity):
             else:
                 self.velocity[0] = max(self.velocity[0] - Player.HorizontalMoveSpeed, -Player.MaxHorizontalMoveSpeed)
                 
-            if self.collidingTop or self.collidingBottom:
+            if not self.collidingLeft and not self.collidingRight and (self.collidingTop or self.collidingBottom):
+                self.flipped = not toRight
+            elif self.collidingLeft or self.collidingRight and (not self.collidingTop and not self.collidingBottom):
+                self.flipped = toRight if self.wallSliding else not toRight
+            elif not (self.collidingLeft or self.collidingRight or self.collidingTop or self.collidingBottom):
                 self.flipped = not toRight
             else:
-                self.flipped = toRight if self.wallSliding else not toRight
+                self.flipped = toRight
             self.moveState = Player.MovingRight if toRight else Player.MovingLeft
 
     def onLand(self):

@@ -55,7 +55,7 @@ class Entity(Object):
                 print "DEBUG",self,"is still colliding with",object,"" + " right" if vxDiff > 0 else " left"
             return Entity.LeftCollision if vxDiff > 0 else Entity.RightCollision
 
-        if (abs(vyDiff / self.velocity[1]) > abs(vxDiff / self.velocity[0])):
+        if (abs(vyDiff / self.velocity[1]) >= abs(vxDiff / self.velocity[0])):
             self.position[0] += vxDiff
             if self.detectCollision(object):
                 print "DEBUG",self,"is still colliding with",object,"" + " right" if vxDiff > 0 else " left"

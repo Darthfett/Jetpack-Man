@@ -91,7 +91,7 @@ class Player(Entity):
             elif not (self.collidingLeft or self.collidingRight or self.collidingTop or self.collidingBottom):
                 self.flipped = not toRight
             else:
-                self.flipped = toRight
+                self.flipped = not toRight if self.velocity[1] == 0 else toRight
             self.moveState = Player.MovingRight if toRight else Player.MovingLeft
 
     def onLand(self):

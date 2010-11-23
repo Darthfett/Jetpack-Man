@@ -196,6 +196,7 @@ class Game:
         self._mapObject(Object(ObjectType.ObjectTypes['block'], position = (150, 450 - 176)))
         self._mapObject(Object(ObjectType.ObjectTypes['block'], position = (500, 300)))
         self._mapObject(Object(ObjectType.ObjectTypes['block'], position = (600, 520)))
+        self._mapObject(Object(ObjectType.ObjectTypes['block'], position = (660,300)))
         self._mapObject(Game.Player)
         Game.Player.objectType.width -= 1
         Game.Player.objectType.height -= 2

@@ -35,7 +35,7 @@ class Player(Entity):
         Starts/Stops the player's Jetpack.        
         """
 
-        if (not self.isFlying and isFlying and self.flyCounter <= Player.MaxFlyLength):
+        if (not self.isFlying and isFlying and self.flyCounter <= Player.MaxFlyLength and not self.wallSliding):
             self.isFlying = True
             self.acceleration[1] -= Player.FlyAcceleration
         elif (self.isFlying and not isFlying):

@@ -83,7 +83,8 @@ class Entity(Object):
                 self.wallSliding = False
             else:
                 self.wallSliding = True
-            self.onLand()
+            if collisionType != Entity.BottomCollision:
+                self.onLand()
 
     def __init__(self, whichType, wallSliding = False, position = [0, 0], velocity = [0, 0], acceleration = [0, 0], flipped = False, collideState = NotColliding):
         """

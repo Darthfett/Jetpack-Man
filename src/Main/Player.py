@@ -54,7 +54,7 @@ class Player(Entity):
 
         if (isJumping and (self.wallSliding or not self.isJumping and self.velocity[1] == 0)):
             self.isJumping = True
-            self.velocity[1] -= Player.JumpInitialVelocity
+            self.velocity[1] = -Player.JumpInitialVelocity
             if self.collidingLeft:
                 self.velocity[0] += Player.WallJumpRepelSpeed
             elif self.collidingRight:

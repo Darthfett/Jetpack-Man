@@ -5,6 +5,8 @@ The Player is the Entity that the player controls.
 """
 
 from Entity import Entity
+from Main.ObjectType import ObjectType
+import Game
 
 class Player(Entity):
 
@@ -13,6 +15,7 @@ class Player(Entity):
     HorizontalMoveSpeed = 1
     MaxHorizontalMoveSpeed = 4
     WallJumpRepelSpeed = 8
+    FireDelay = 10
 
     MaxFlyLength = 64
 
@@ -29,6 +32,19 @@ class Player(Entity):
             self.currentAnimation = self.objectType.animations['move']
         if self.isFlying:
             self.currentAnimation = self.objectType.animations['fly']
+    
+    
+    def firing(self,isFiring):
+        """
+        Starts/Stops the player's weapon.
+        """
+        self.isFiring = isFiring
+        if self.fireDelay > 0:
+            self.fireDelay -= 1
+        if self.isFiring:
+            if self.fireDelay <= 0:
+                self.fireDelay = Player.FireDelay
+                projectile = Entity(ObjectType.ObjectTypes['laser'], position = [self.position[0] + (-5 if self.flipped else 5), self.position[1] + 5],velocity = [-15 if self.flipped else 15,0], acceleration = [0,-Game.Game.Gravity], projectile = True)
 
     def flying(self, isFlying):
         """
@@ -110,3 +126,4 @@ class Player(Entity):
         self.isJumping = False
         self.isFlying = False
         self.flyCounter = 0
+        self.fireDelay = Player.FireDelay

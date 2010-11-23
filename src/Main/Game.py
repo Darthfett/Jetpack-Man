@@ -25,10 +25,10 @@ class Game:
 
     #Controls
     Controls = {}
-    ControlCount = 6
+    ControlCount = 7
     ControlState = [False] * ControlCount
     BoundControls = []
-    MoveLeft, MoveRight, Jump, Duck, Fly, Quit = range(ControlCount)
+    MoveLeft, MoveRight, Jump, Duck, Fly, Fire, Quit = range(ControlCount)
 
 
     #Physics
@@ -68,13 +68,14 @@ class Game:
         
         Performs the Player's actions
         Actions are:
-            MoveLeft, MoveRight, Jump, Duck, Fly.
+            MoveLeft, MoveRight, Jump, Duck, Fly, Fire.
         
         """
 
         Game.Player.running(Game.ControlState[Game.MoveRight], not (Game.ControlState[Game.MoveRight] == Game.ControlState[Game.MoveLeft]))
         Game.Player.jumping(Game.ControlState[Game.Jump])
         Game.Player.flying(Game.ControlState[Game.Fly])
+        Game.Player.firing(Game.ControlState[Game.Fire])
 
     def _nextFrame(self):
         """
@@ -100,19 +101,19 @@ class Game:
             entity.collideState = Entity.NotColliding
 
         #Collision
-        entity.collidingLeft,entity.collidingRight,entity.collidingTop,entity.collidingBottom = [False]*4
         
         for entity in Entity.Entities:
-            for object in Entity.Entities + Object.Objects:
+            entity.collidingLeft,entity.collidingRight,entity.collidingTop,entity.collidingBottom = [False]*4
+            for object in Object.Objects:
                 entity.colliding(entity.detectCollision(object), object)
         
-        if entity.wallSliding:
-            if entity.velocity[1] > Game.maxSlideSpeed:
-                entity.velocity[1] = Game.maxSlideSpeed
-        if entity.collidingLeft or entity.collidingRight:
-            entity.velocity[0] = 0
-        if entity.collidingTop or entity.collidingBottom:
-            entity.velocity[1] = 0
+            if entity.wallSliding:
+                if entity.velocity[1] > Game.maxSlideSpeed:
+                    entity.velocity[1] = Game.maxSlideSpeed
+            if entity.collidingLeft or entity.collidingRight:
+                entity.velocity[0] = 0
+            if entity.collidingTop or entity.collidingBottom:
+                entity.velocity[1] = 0
 
         #Animation
         for entity in Entity.Entities:
@@ -212,12 +213,14 @@ class Game:
         Game.Controls[pygame.K_w] = Game.Jump
         Game.Controls[pygame.K_s] = Game.Duck
         Game.Controls[pygame.K_SPACE] = Game.Fly
+        Game.Controls[pygame.K_j] = Game.Fire
         Game.Controls[pygame.K_ESCAPE] = Game.Quit
 
         Game.BoundControls.append(pygame.K_a)
         Game.BoundControls.append(pygame.K_d)
         Game.BoundControls.append(pygame.K_w)
         Game.BoundControls.append(pygame.K_s)
+        Game.BoundControls.append(pygame.K_j)
         Game.BoundControls.append(pygame.K_SPACE)
         Game.BoundControls.append(pygame.K_ESCAPE)
 

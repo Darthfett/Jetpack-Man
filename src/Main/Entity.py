@@ -18,8 +18,11 @@ class Entity(Object):
         Calculates the current animation.
         """
         self.currentAnimation = self.objectType.animations['idle']
-        if (self.velocity[0] != 0):
-            self.currentAnimation = self.objectType.animations['move']
+        try:
+            if (self.velocity[0] != 0):
+                self.currentAnimation = self.objectType.animations['move']
+        except:
+            pass
 
         return self.currentAnimation.frame[0]
 
@@ -68,7 +71,11 @@ class Entity(Object):
 
     def colliding(self, isColliding, object):
         if isColliding:
-            collisionType = self.onObjectCollision(object)
+            if self.projectile:
+                # Destroy projectile
+                return
+            else:
+                collisionType = self.onObjectCollision(object)
             
             if collisionType == Entity.LeftCollision:
                 self.collidingLeft = True
@@ -86,7 +93,7 @@ class Entity(Object):
             if collisionType != Entity.BottomCollision:
                 self.onLand()
 
-    def __init__(self, whichType, wallSliding = False, position = [0, 0], velocity = [0, 0], acceleration = [0, 0], flipped = False, collideState = NotColliding):
+    def __init__(self, whichType, wallSliding = False, position = [0, 0], velocity = [0, 0], acceleration = [0, 0], flipped = False, collideState = NotColliding, projectile = False):
         """
         Creates a basic Entity of a specific type.
         """
@@ -101,3 +108,4 @@ class Entity(Object):
         self.collideState = collideState
         self.collidingLeft,self.collidingRight,self.collidingTop,self.collidingBottom = [False] * 4
         self.collidingRight = False
+        self.projectile = projectile

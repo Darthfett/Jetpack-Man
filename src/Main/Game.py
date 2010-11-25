@@ -36,24 +36,38 @@ class Game:
     CollisionBlockSize = 1
     Gravity = .5
     maxSlideSpeed = 1
+    
+    def _getCurrentObjectFrame(self, object):
+        """
+        Calculates the frame of the current animation for the given object to play.
+        """
+        object.currentFrame = object.currentAnimation.frame[(self.frameCount * object.currentAnimation.fps / Game.FPSLimit) % len(object.currentAnimation.frame)]
+        if object.flipped:
+            object.currentFrame = pygame.transform.flip(object.currentFrame, 1, 0)
+            
+        return object.currentFrame
 
     def _drawObject(self, object):
         """
         Draws the given object to the screen
         """
-
-        object.currentFrame = object.currentAnimation.frame[(self.frameCount * object.currentAnimation.fps / Game.FPSLimit) % len(object.currentAnimation.frame)]
-        if object.flipped:
-            object.currentFrame = pygame.transform.flip(object.currentFrame, 1, 0)
         if object.draw:
-            Game.Screen.blit(object.currentFrame, object.position)
+            Game.Screen.blit(self._getCurrentObjectFrame(object), object.position)
+            
+    def _clearScreen(self):
+        """
+        Clears the screen
+        """
+        Game.Screen.fill((0, 0, 0))
+        
 
     def _drawFrame(self):
         """
         Draws the current frame to the screen
         """
 
-        Game.Screen.fill((0, 0, 0))
+        self._clearScreen()
+        
         for object in Object.Objects:
             self._drawObject(object)
 
@@ -63,7 +77,7 @@ class Game:
         self._drawObject(Game.Player)
 
 
-    def handleInput(self):
+    def _handleInput(self):
         """
         
         Performs the Player's actions
@@ -82,9 +96,10 @@ class Game:
         Computes the current frame of the game
         """
 
-        self.handleInput()
+        self._handleInput()        
 
         for entity in Entity.Entities:
+        
             #Acceleration
             entity.velocity[1] += Game.Gravity
 
@@ -100,20 +115,25 @@ class Game:
             entity.wallSliding = False
             entity.collideState = Entity.NotColliding
 
-        #Collision
-        
+        #Collision        
         for entity in Entity.Entities:
+            #Reset collision values
             entity.collidingLeft,entity.collidingRight,entity.collidingTop,entity.collidingBottom = [False]*4
+            entity.wallSliding = False
+            
             for object in Object.Objects:
                 entity.colliding(entity.detectCollision(object), object)
-        
+            
+            if entity.collidingLeft or entity.collidingRight:
+                entity.wallSliding = True
+                entity.velocity[0] = 0
+            
+            if entity.collidingTop or entity.collidingBottom:
+                entity.velocity[1] = 0
+            
             if entity.wallSliding:
                 if entity.velocity[1] > Game.maxSlideSpeed:
                     entity.velocity[1] = Game.maxSlideSpeed
-            if entity.collidingLeft or entity.collidingRight:
-                entity.velocity[0] = 0
-            if entity.collidingTop or entity.collidingBottom:
-                entity.velocity[1] = 0
 
         #Animation
         for entity in Entity.Entities:
@@ -150,6 +170,7 @@ class Game:
         nextFrameTime = 0
         deltaFrameTime = 1000 / Game.FPSLimit
 
+        # Main Loop
         try:
             while True:
                 self._handleEvents()
@@ -168,7 +189,7 @@ class Game:
 
     def _mapObject(self, object):
         """
-        Maps the given object into the CollisionMap
+        Maps the given object into the Collision Map
         """
         firstRow = object.position[0] / Game.CollisionBlockSize
         lastRow = int(math.ceil((object.position[0] + object.objectType.width) / Game.CollisionBlockSize))

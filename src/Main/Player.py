@@ -86,6 +86,7 @@ class Player(Entity):
         """
 
         if not isRunning:
+            # Slow the player down to zero when user is not running
             if self.velocity[0] != 0 and abs(self.velocity[0]) < Player.HorizontalMoveSpeed:
                 self.velocity[0] = 0
             elif self.velocity[0] >= Player.HorizontalMoveSpeed:
@@ -95,6 +96,7 @@ class Player(Entity):
             self.moveState = Player.NotMoving
             self.collideState = Entity.NotColliding
         else:
+            # Speed the player up to Player.MaxHorizonalMoveSpeed in the direction they are moving.
             if toRight:
                 self.velocity[0] = min(self.velocity[0] + Player.HorizontalMoveSpeed, Player.MaxHorizontalMoveSpeed)
             else:
@@ -119,9 +121,9 @@ class Player(Entity):
         self.isFlying = False
         self.flyCounter = 0
 
-    def __init__(self, whichType, position = [0, 0], flipped = False, blink = False):
+    def __init__(self, whichType, position = [0, 0], flipped = False):
         Entity.__init__(self, whichType, position = position, flipped = flipped)
-        self.blink = blink
+        self.blink = False
         self.moveState = Player.NotMoving
         self.isJumping = False
         self.isFlying = False

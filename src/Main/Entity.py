@@ -51,15 +51,14 @@ class Entity(Object):
             objectMinY = abs(object.position[1])
             objectMaxX = object.position[0] + object.objectType.width
             objectMaxY = abs(object.position[1] + object.objectType.height)
-            collision1 = not (selfMaxX1 <= objectMinX or selfMinX1 >= objectMaxX or selfMaxY1 <= objectMinY or selfMinY1 >= objectMaxY)
-            collision2 = not (selfMaxX2 <= objectMinX or selfMinX2 >= objectMaxX or selfMaxY2 <= objectMinY or selfMinY2 >= objectMaxY)
+            collision1 = collision1 or not (selfMaxX1 <= objectMinX or selfMinX1 >= objectMaxX or selfMaxY1 <= objectMinY or selfMinY1 >= objectMaxY)
+            collision2 = collision2 or not (selfMaxX2 <= objectMinX or selfMinX2 >= objectMaxX or selfMaxY2 <= objectMinY or selfMinY2 >= objectMaxY)
                     
         if not collision1:
             return position1
         
-        if collision2:
+        if not collision2:
             return position2
-        print "Uh oh, double collisions"
         return None
         
         
@@ -74,8 +73,6 @@ class Entity(Object):
             vxDiff = object.position[0] - (self.position[0] + self.objectType.width)
         else:
             self.position[1] = (object.position[1] + object.objectType.height) if (self.velocity[1] < 0) else (object.position[1] - self.objectType.height)
-            if self.detectCollision(object):
-                print "DEBUG",self,"is still colliding with",object,"" + " top" if self.velocity[1] > 0 else " bottom"
                 
             return Entity.BottomCollision if self.velocity[1] < 0 else Entity.TopCollision
 
@@ -85,8 +82,6 @@ class Entity(Object):
             vyDiff = (object.position[1] + object.objectType.height) - self.position[1]
         else:
             self.position[0] += vxDiff
-            if self.detectCollision(object):
-                print "DEBUG",self,"is still colliding with",object,"" + " right" if vxDiff > 0 else " left"
             return Entity.LeftCollision if vxDiff > 0 else Entity.RightCollision
 
         if (abs(vyDiff / self.velocity[1]) > abs(vxDiff / self.velocity[0])):
@@ -95,24 +90,22 @@ class Entity(Object):
             newPosition = self.getBestPosition(Xpoint, Ypoint)
             if newPosition != None:
                 self.position = newPosition
+                return (Entity.BottomCollision if vyDiff > 0 else Entity.TopCollision) if newPosition == Ypoint else (Entity.LeftCollision if vxDiff > 0 else Entity.RightCollision)
             else:
                 self.position = Xpoint
+                return Entity.LeftCollision if vxDiff > 0 else Entity.RightCollision
                 
-            if self.detectCollision(object):
-                print "DEBUG",self,"is still colliding with",object,"" + " right" if vxDiff > 0 else " left"
-            return Entity.LeftCollision if vxDiff > 0 else Entity.RightCollision
         else:
             Xpoint = [self.position[0] + vxDiff, self.position[1]]
             Ypoint = [self.position[0],self.position[1] + vyDiff]
             newPosition = self.getBestPosition(Ypoint, Xpoint)
             if newPosition != None:
+                if newPosition == Xpoint: print 'collision avoided'
                 self.position = newPosition
+                return (Entity.BottomCollision if vyDiff > 0 else Entity.TopCollision) if newPosition == Ypoint else (Entity.LeftCollision if vxDiff > 0 else Entity.RightCollision)
             else:
                 self.position = Ypoint
-                
-            if self.detectCollision(object):
-                print "DEBUG",self,"is still colliding with",object,"" + " top" if self.velocity[1] > 0 else " bottom"
-            return Entity.BottomCollision if vyDiff > 0 else Entity.TopCollision
+                return Entity.BottomCollision if vyDiff > 0 else Entity.TopCollision
 
     def colliding(self, isColliding, object):
         if isColliding:

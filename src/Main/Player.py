@@ -5,6 +5,7 @@ The Player is the Entity that the player controls.
 """
 
 from Entity import Entity
+from Object import Object
 from Main.ObjectType import ObjectType
 import Game
 
@@ -18,17 +19,16 @@ class Player(Entity):
     FireDelay = 10
 
     MaxFlyLength = 64
-
-    MovingLeft, MovingRight, NotMoving = range(3)
+    
+    #Running State
+    RunningLeft, RunningRight = range(2)
 
     def getNextFrame(self):
         """
         Calculates the current animation.
         """
-        if self.blink:
-            self.draw = not self.draw
         self.currentAnimation = self.objectType.animations['idle']
-        if self.moveState != Player.NotMoving:
+        if self.runState != None:
             self.currentAnimation = self.objectType.animations['move']
         if self.isFlying:
             self.currentAnimation = self.objectType.animations['fly']
@@ -50,34 +50,55 @@ class Player(Entity):
         """
         Starts/Stops the player's Jetpack.        
         """
-
-        if (not self.isFlying and isFlying and self.flyCounter <= Player.MaxFlyLength and not self.wallSliding):
-            self.isFlying = True
-            self.acceleration[1] -= Player.FlyAcceleration
-        elif (self.isFlying and not isFlying):
-            self.isFlying = False
-            self.acceleration[1] += Player.FlyAcceleration
-        elif (self.isFlying and isFlying):
-            self.flyCounter += 0.5 + abs(min(0, self.velocity[1] / 2))
-            if self.flyCounter > Player.MaxFlyLength:
+        
+        if isFlying:
+            if self.isFlying:
+                if self.flyCounter > Player.MaxFlyLength:
+                    self.isFlying = False
+                    self.acceleration[1] += Player.FlyAcceleration
+                else:
+                    if self.wallSliding:
+                        self.isFlying = False
+                        self.acceleration[1] += Player.FlyAcceleration
+                    else:
+                        self.flyCounter += 0.5 + abs(min(0, self.velocity[1] / 2))
+            else:
+                if self.wallSliding:
+                    pass
+                else:
+                    if self.flyCounter <= Player.MaxFlyLength:
+                        self.isFlying = True
+                        self.acceleration[1] -= Player.FlyAcceleration
+        else:
+            if self.isFlying:
                 self.isFlying = False
-                self.acceleration[1] += Player.FlyAcceleration
+                self. acceleration[1] += Player.FlyAcceleration
 
     def jumping(self, isJumping):
         """
         Starts/Stops the player's jump
         """
-
-        if (isJumping and (self.wallSliding or not self.isJumping and self.velocity[1] == 0)):
-            self.isJumping = True
-            self.velocity[1] = -Player.JumpInitialVelocity
-            if self.collidingLeft:
-                self.velocity[0] += Player.WallJumpRepelSpeed
-            elif self.collidingRight:
-                self.velocity[0] -= Player.WallJumpRepelSpeed
-        elif (not isJumping and self.isJumping):
+        
+        if isJumping:
+            if not self.isJumping:
+                if self.velocity[1] == 0:
+                    self.isJumping = True
+                    self.velocity[1] = -Player.JumpInitialVelocity
+                elif self.wallSliding:
+                    self.wallSliding = False
+                    self.isJumping = True
+                    self.velocity[1] = -Player.JumpInitialVelocity
+                    self.velocity[0] += Player.WallJumpRepelSpeed if self.slidingSide == Object.Left else -Player.WallJumpRepelSpeed
+                        
+            elif self.wallSliding:
+                self.wallSliding = False
+                self.isJumping = True
+                self.velocity[1] = -Player.JumpInitialVelocity
+                self.velocity[0] += Player.WallJumpRepelSpeed if self.slidingSide == Object.Left else -Player.WallJumpRepelSpeed
+                
+        elif not isJumping and self.isJumping:
             self.isJumping = False
-            if (self.velocity[1] < 0 and not self.isFlying):
+            if self.velocity[1] < 0 and not self.isFlying:
                 self.velocity[1] = 0
 
     def running(self, toRight, isRunning):
@@ -86,31 +107,42 @@ class Player(Entity):
         """
 
         if not isRunning:
-            # Slow the player down to zero when user is not running
             if self.velocity[0] != 0 and abs(self.velocity[0]) < Player.HorizontalMoveSpeed:
                 self.velocity[0] = 0
             elif self.velocity[0] >= Player.HorizontalMoveSpeed:
                 self.velocity[0] -= Player.HorizontalMoveSpeed
             elif abs(self.velocity[0]) >= Player.HorizontalMoveSpeed:
                 self.velocity[0] += Player.HorizontalMoveSpeed
-            self.moveState = Player.NotMoving
-            self.collideState = Entity.NotColliding
+                
+            self.runState = None
+            self.wallSliding = False
+            self.slidingSide = None
+            
         else:
             # Speed the player up to Player.MaxHorizonalMoveSpeed in the direction they are moving.
-            if toRight:
-                self.velocity[0] = min(self.velocity[0] + Player.HorizontalMoveSpeed, Player.MaxHorizontalMoveSpeed)
+            if toRight and self.collidingRight or not toRight and self.collidingLeft:
+                self.wallSliding = True
+                self.slidingSide = Object.Right if self.collidingRight else Object.Left
+            elif self.wallSliding:
+                pass
             else:
-                self.velocity[0] = max(self.velocity[0] - Player.HorizontalMoveSpeed, -Player.MaxHorizontalMoveSpeed)
+                self.wallSliding = False
+                self.slidingSide = None
+            
+            if not self.wallSliding:
+                if toRight:
+                    self.velocity[0] = min(self.velocity[0] + Player.HorizontalMoveSpeed, Player.MaxHorizontalMoveSpeed)
+                else:
+                    self.velocity[0] = max(self.velocity[0] - Player.HorizontalMoveSpeed, -Player.MaxHorizontalMoveSpeed)
+                    
+            if self.collidingTop:
+                self.flipped = not toRight
+            elif self.wallSliding:
+                self.flipped = self.slidingSide == Object.Right
+            else:
+                self.flipped = not toRight
                 
-            if not self.collidingLeft and not self.collidingRight and (self.collidingTop or self.collidingBottom):
-                self.flipped = not toRight
-            elif self.collidingLeft or self.collidingRight and (not self.collidingTop and not self.collidingBottom):
-                self.flipped = toRight if self.wallSliding else not toRight
-            elif not (self.collidingLeft or self.collidingRight or self.collidingTop or self.collidingBottom):
-                self.flipped = not toRight
-            else:
-                self.flipped = not toRight if self.velocity[1] == 0 else toRight
-            self.moveState = Player.MovingRight if toRight else Player.MovingLeft
+            self.runState = Object.Right if toRight else Object.Left
 
     def onLand(self):
         """
@@ -123,9 +155,15 @@ class Player(Entity):
 
     def __init__(self, whichType, position = [0, 0], flipped = False):
         Entity.__init__(self, whichType, position = position, flipped = flipped)
-        self.blink = False
-        self.moveState = Player.NotMoving
+        
+        #Collision
+        
+        #Controls
         self.isJumping = False
+        
         self.isFlying = False
         self.flyCounter = 0
+        
+        self.runState = None
+        
         self.fireDelay = Player.FireDelay

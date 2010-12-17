@@ -7,6 +7,8 @@ from Main.ObjectType import ObjectType
 
 class Object:
     Objects = []
+    
+    Left,Bottom,Top,Right = range(4)
 
     def detectCollision(self, object):
         if self == object:

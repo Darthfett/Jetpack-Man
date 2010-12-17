@@ -95,7 +95,6 @@ class Game:
         """
         Computes the current frame of the game
         """
-
         self._handleInput()        
 
         for entity in Entity.Entities:
@@ -112,20 +111,17 @@ class Game:
                 entity.position = Game.currentLevel.start
                 entity.velocity[1] = 0
             
-            entity.wallSliding = False
-            entity.collideState = Entity.NotColliding
+            entity.collideState = None
 
         #Collision        
         for entity in Entity.Entities:
             #Reset collision values
             entity.collidingLeft,entity.collidingRight,entity.collidingTop,entity.collidingBottom = [False]*4
-            entity.wallSliding = False
             
             for object in Object.Objects:
                 entity.colliding(entity.detectCollision(object), object)
             
             if entity.collidingLeft or entity.collidingRight:
-                entity.wallSliding = True
                 entity.velocity[0] = 0
             
             if entity.collidingTop or entity.collidingBottom:
@@ -134,7 +130,6 @@ class Game:
             if entity.wallSliding:
                 if entity.velocity[1] > Game.maxSlideSpeed:
                     entity.velocity[1] = Game.maxSlideSpeed
-
         #Animation
         for entity in Entity.Entities:
             entity.getNextFrame()

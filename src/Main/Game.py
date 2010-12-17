@@ -120,6 +120,10 @@ class Game:
             
             for object in Object.Objects:
                 entity.colliding(entity.detectCollision(object), object)
+                
+            if entity.destroy:
+                Entity.Entities.remove(entity)
+                continue
             
             if entity.collidingLeft or entity.collidingRight:
                 entity.velocity[0] = 0

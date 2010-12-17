@@ -54,7 +54,7 @@ class Entity(Object):
     def colliding(self, isColliding, object):
         if isColliding:
             if self.projectile:
-                # Destroy projectile
+                self.destroy = True
                 return
             else:
                 collisionType = self.onObjectCollision(object)
@@ -91,3 +91,4 @@ class Entity(Object):
         self.slidingSide = None
 
         self.projectile = projectile
+        self.destroy = False

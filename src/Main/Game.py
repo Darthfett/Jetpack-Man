@@ -121,6 +121,10 @@ class Game:
             for object in Object.Objects:
                 entity.colliding(entity.detectCollision(object), object)
                 
+            if entity.projectile:
+                if not entity.detectRectCollision(Game.currentLevel.rect):
+                    entity.destroy = True
+                
             if entity.destroy:
                 Entity.Entities.remove(entity)
                 continue
@@ -201,8 +205,8 @@ class Game:
     def _initLevel(self):
         Game.currentLevel = Level('default', ['objects.dat'])
 
-        columnCount = int(math.ceil(Game.currentLevel.width / Game.CollisionBlockSize))
-        rowCount = int(math.ceil(Game.currentLevel.height / Game.CollisionBlockSize))
+        columnCount = int(math.ceil(Game.currentLevel.rect.width / Game.CollisionBlockSize))
+        rowCount = int(math.ceil(Game.currentLevel.rect.height / Game.CollisionBlockSize))
 
         for row in range(rowCount):
             blocks = []

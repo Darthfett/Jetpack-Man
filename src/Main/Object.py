@@ -4,6 +4,7 @@ An Object is an object that is drawn to the screen.
 It can have animations, position, and size.
 """
 from Main.ObjectType import ObjectType
+import pygame
 
 class Object:
     Objects = []
@@ -23,6 +24,13 @@ class Object:
         objectMaxY = abs(object.position[1] + object.objectType.height)
         return not (selfMaxX <= objectMinX or selfMinX >= objectMaxX or selfMaxY <= objectMinY or selfMinY >= objectMaxY)
 
+    def detectRectCollision(self,rect):
+        selfMinX = self.position[0]
+        selfMinY = abs(self.position[1])
+        selfMaxX = self.position[0] + self.objectType.width
+        selfMaxY = abs(self.position[1] + self.objectType.height)
+        return not (selfMaxX <= rect.left or selfMinX >= rect.right or selfMaxY <= rect.top or selfMinY >= rect.bottom)
+        
 
     def getNextFrame(self):
         """

@@ -5,6 +5,7 @@ It should also define start position as well as level size
 """
 
 import os
+import pygame
 
 class Level:
     
@@ -15,5 +16,4 @@ class Level:
         self.name = name
         self.start = start
         self.objects = objects
-        self.width = width
-        self.height = height
+        self.rect = pygame.Rect((0,0),(width,height))

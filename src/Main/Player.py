@@ -123,8 +123,6 @@ class Player(Entity):
             if toRight and self.collidingRight or not toRight and self.collidingLeft:
                 self.wallSliding = True
                 self.slidingSide = Object.Right if self.collidingRight else Object.Left
-            elif self.wallSliding:
-                pass
             else:
                 self.wallSliding = False
                 self.slidingSide = None

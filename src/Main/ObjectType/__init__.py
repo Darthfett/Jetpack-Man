@@ -1,4 +1,5 @@
 from Main.Animation import Animation
+import pygame
 import os
 
 class ObjectType:
@@ -17,8 +18,8 @@ class ObjectType:
         """
         Adds the name of an animation and the path to the file into a dictionary for later use.
         """
-        self.width = max(self.width,animation.width)
-        self.height = max(self.height,animation.height)
+        self.rect.width = max(self.rect.width,animation.width)
+        self.rect.height = max(self.rect.height,animation.height)
         self.animations[name] = animation
 
     def __init__(self, name, idle):
@@ -32,8 +33,7 @@ class ObjectType:
         #Animations
         self.animations = {}
         self.animations['idle'] = idle
-        self.width = idle.width
-        self.height = idle.height
+        self.rect = pygame.Rect((0,0,idle.width,idle.height))
 
     @staticmethod
     def initializeObjectTypes():

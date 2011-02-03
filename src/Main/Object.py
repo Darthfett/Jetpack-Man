@@ -10,26 +10,22 @@ class Object:
     Objects = []
     
     Left,Bottom,Top,Right = range(4)
+    
+    @staticmethod
+    def detectCollisionXY(selfMinX, selfMaxX, selfMinY, selfMaxY, objectMinX, objectMaxX, objectMinY, objectMaxY):
+        return not (selfMaxX < objectMinX or selfMinX > objectMaxX or selfMaxY <= objectMinY or selfMinY >= objectMaxY)
+
+    @staticmethod
+    def detectRectOnRectCollision(rectEnt,rectObj):
+        return Object.detectCollisionXY(rectEnt.left, rectEnt.right, rectEnt.top, rectEnt.bottom, rectObj.left, rectObj.right, rectObj.top, rectObj.bottom)
+        
+    def detectRectCollision(self,rectObj):
+       return Object.detectRectOnRectCollision(self.rect,rectObj)
 
     def detectCollision(self, object):
         if self == object:
             return False
-        selfMinX = self.position[0]
-        selfMinY = abs(self.position[1])
-        selfMaxX = self.position[0] + self.objectType.width
-        selfMaxY = abs(self.position[1] + self.objectType.height)
-        objectMinX = object.position[0]
-        objectMinY = abs(object.position[1])
-        objectMaxX = object.position[0] + object.objectType.width
-        objectMaxY = abs(object.position[1] + object.objectType.height)
-        return not (selfMaxX < objectMinX or selfMinX > objectMaxX or selfMaxY <= objectMinY or selfMinY >= objectMaxY)
-
-    def detectRectCollision(self,rect):
-        selfMinX = self.position[0]
-        selfMinY = abs(self.position[1])
-        selfMaxX = self.position[0] + self.objectType.width
-        selfMaxY = abs(self.position[1] + self.objectType.height)
-        return not (selfMaxX <= rect.left or selfMinX >= rect.right or selfMaxY <= rect.top or selfMinY >= rect.bottom)
+        return Object.detectRectOnRectCollision(self.rect,object.rect)
         
 
     def getNextFrame(self):
@@ -47,10 +43,12 @@ class Object:
         """
 
         Object.Objects.append(self)
+        self.objectType = whichType
+        
         self.flipped = flipped
         self.position = position
-        self.draw = draw
-
-        self.objectType = whichType
+        self.rect = self.objectType.rect.move(position[0],position[1])
+        
         self.currentAnimation = self.objectType.animations['idle']
         self.currentFrame = self.objectType.animations['idle'].frame[0]
+        self.draw = draw

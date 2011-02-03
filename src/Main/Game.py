@@ -52,7 +52,7 @@ class Game:
         Draws the given object to the screen
         """
         if object.draw:
-            Game.Screen.blit(self._getCurrentObjectFrame(object), object.position)
+            Game.Screen.blit(self._getCurrentObjectFrame(object), object.rect.topleft)
             
     def _clearScreen(self):
         """
@@ -106,9 +106,11 @@ class Game:
             entity.velocity = [entity.velocity[i] + entity.acceleration[i] for i in range(len(entity.velocity))]
 
             #Position
-            entity.position = [entity.position[i] + entity.velocity[i] for i in range(len(entity.position))]
-            if (entity.position[1] > Game.ScreenHeight):
-                entity.position = Game.currentLevel.start
+            entity.rect.left += entity.velocity[0]
+            entity.rect.top += entity.velocity[1]
+            
+            if (entity.rect.top > Game.ScreenHeight):
+                entity.rect.topleft = Game.currentLevel.start
                 entity.velocity[1] = 0
             
             entity.collideState = None
@@ -194,10 +196,10 @@ class Game:
         """
         Maps the given object into the Collision Map
         """
-        firstRow = object.position[0] / Game.CollisionBlockSize
-        lastRow = int(math.ceil((object.position[0] + object.objectType.width) / Game.CollisionBlockSize))
-        firstCol = object.position[1] / Game.CollisionBlockSize
-        lastCol = int(math.ceil((abs(object.position[1]) + object.objectType.height) / Game.CollisionBlockSize))
+        firstRow = object.rect.left / Game.CollisionBlockSize
+        lastRow = int(math.ceil(object.rect.right / Game.CollisionBlockSize))
+        firstCol = object.rect.top / Game.CollisionBlockSize
+        lastCol = int(math.ceil((abs(object.rect.top) + object.rect.height) / Game.CollisionBlockSize))
         for row in range(firstRow, lastRow):
             for col in range(firstCol, lastCol):
                 Game.CollisionMap[row][col].add(object)
@@ -223,8 +225,6 @@ class Game:
         self._mapObject(Object(ObjectType.ObjectTypes['block'], position = (600, 520)))
         self._mapObject(Object(ObjectType.ObjectTypes['block'], position = (660,300)))
         self._mapObject(Game.Player)
-        Game.Player.objectType.width -= 1
-        Game.Player.objectType.height -= 2
 
     def _initControls(self):
         """

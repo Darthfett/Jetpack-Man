@@ -44,7 +44,7 @@ class Player(Entity):
         if self.isFiring:
             if self.fireDelay <= 0:
                 self.fireDelay = Player.FireDelay
-                projectile = Entity(ObjectType.ObjectTypes['laser'], position = [self.position[0] + (-5 if self.flipped else 5), self.position[1] + 5],velocity = [-15 if self.flipped else 15,0], acceleration = [0,-Game.Game.Gravity], projectile = True)
+                projectile = Entity(ObjectType.ObjectTypes['laser'], position = [self.rect.left + (-5 if self.flipped else 5), self.rect.top + 5],velocity = [-15 if self.flipped else 15,0], acceleration = [0,-Game.Game.Gravity], projectile = True)
 
     def flying(self, isFlying):
         """

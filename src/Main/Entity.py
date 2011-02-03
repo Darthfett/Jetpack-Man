@@ -27,28 +27,31 @@ class Entity(Object):
         Upon collision with an Object, entities are moved towards the side of the bounding rect that they would have hit first.
         """
         if self.velocity[0] < 0:
-            vxDiff = (object.position[0] + object.objectType.width) - self.position[0]
+            vxDiff = object.rect.right - self.rect.left
         elif self.velocity[0] > 0:
-            vxDiff = object.position[0] - (self.position[0] + self.objectType.width)
+            vxDiff = object.rect.left - self.rect.right
         else:
-            self.position[1] = (object.position[1] + object.objectType.height) if (self.velocity[1] < 0) else (object.position[1] - self.objectType.height)
+            if self.velocity[1] < 0:
+                self.rect.top = object.rect.bottom
+            else:
+                self.rect.bottom = object.rect.top
                 
             return Object.Bottom if self.velocity[1] < 0 else Object.Top
 
         if self.velocity[1] > 0:
-            vyDiff = object.position[1] - (self.position[1] + self.objectType.height)
+            vyDiff = object.rect.top - self.rect.bottom
         elif self.velocity[1] < 0:
-            vyDiff = (object.position[1] + object.objectType.height) - self.position[1]
+            vyDiff = object.rect.bottom - self.rect.top
         else:
-            self.position[0] += vxDiff
+            self.rect.left += vxDiff
             return Object.Left if vxDiff > 0 else Object.Right
 
         if (abs(vyDiff / self.velocity[1]) > abs(vxDiff / self.velocity[0])):
-            self.position = [self.position[0] + vxDiff, self.position[1]]
+            self.rect.left += vxDiff
             return Object.Left if vxDiff > 0 else Object.Right
                 
         else:
-            self.position = [self.position[0],self.position[1] + vyDiff]
+            self.rect.top += vyDiff
             return Object.Bottom if vyDiff > 0 else Object.Top
 
     def colliding(self, isColliding, object):

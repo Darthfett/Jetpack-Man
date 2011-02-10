@@ -14,7 +14,6 @@ class Player(Entity):
     FlyAcceleration = 0.51
     JumpInitialVelocity = 9
     HorizontalMoveSpeed = 1
-    MaxHorizontalMoveSpeed = 4
     WallJumpRepelSpeed = 8
     FireDelay = 10
 
@@ -91,6 +90,7 @@ class Player(Entity):
                     self.velocity[0] += Player.WallJumpRepelSpeed if self.slidingSide == Object.Left else -Player.WallJumpRepelSpeed
                         
             elif self.wallSliding:
+                self.trySlide = False
                 self.wallSliding = False
                 self.isJumping = True
                 self.velocity[1] = -Player.JumpInitialVelocity
@@ -113,25 +113,27 @@ class Player(Entity):
                 self.velocity[0] -= Player.HorizontalMoveSpeed
             elif abs(self.velocity[0]) >= Player.HorizontalMoveSpeed:
                 self.velocity[0] += Player.HorizontalMoveSpeed
+            else:               
+                self.trySlide = False
                 
             self.runState = None
             self.wallSliding = False
             self.slidingSide = None
             
         else:
-            # Speed the player up to Player.MaxHorizonalMoveSpeed in the direction they are moving.
+            self.trySlide = True
+            # Speed the player up to Entity.MaxHorizonalMoveSpeed in the direction they are moving.
             if toRight and self.collidingRight or not toRight and self.collidingLeft:
-                self.wallSliding = True
-                self.slidingSide = Object.Right if self.collidingRight else Object.Left
+                pass
             else:
                 self.wallSliding = False
                 self.slidingSide = None
             
             if not self.wallSliding:
                 if toRight:
-                    self.velocity[0] = min(self.velocity[0] + Player.HorizontalMoveSpeed, Player.MaxHorizontalMoveSpeed)
+                    self.velocity[0] = min(self.velocity[0] + Player.HorizontalMoveSpeed, Entity.MaxHorizontalMoveSpeed)
                 else:
-                    self.velocity[0] = max(self.velocity[0] - Player.HorizontalMoveSpeed, -Player.MaxHorizontalMoveSpeed)
+                    self.velocity[0] = max(self.velocity[0] - Player.HorizontalMoveSpeed, -Entity.MaxHorizontalMoveSpeed)
                     
             if self.collidingTop:
                 self.flipped = not toRight

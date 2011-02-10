@@ -90,12 +90,8 @@ class Game:
         Game.Player.jumping(Game.ControlState[Game.Jump])
         Game.Player.flying(Game.ControlState[Game.Fly])
         Game.Player.firing(Game.ControlState[Game.Fire])
-
-    def _nextFrame(self):
-        """
-        Computes the current frame of the game
-        """
-        self._handleInput()        
+        
+    def _doPhysics(self):
 
         for entity in Entity.Entities:
         
@@ -140,6 +136,13 @@ class Game:
             if entity.wallSliding:
                 if entity.velocity[1] > Game.maxSlideSpeed:
                     entity.velocity[1] = Game.maxSlideSpeed
+
+    def _nextFrame(self):
+        """
+        Computes the current frame of the game
+        """
+        self._handleInput()  
+        self._doPhysics()      
         #Animation
         for entity in Entity.Entities:
             entity.getNextFrame()

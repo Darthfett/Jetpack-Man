@@ -5,6 +5,7 @@ It can have velocity, acceleration, and several other properties
 """
 
 from Object import Object
+from Vector import Vector
 import math
 
 class Entity(Object):
@@ -20,35 +21,35 @@ class Entity(Object):
         """
         Called upon landing on an object
         """
-        self.acceleration[1] = 0
+        self.acceleration.y = 0
 
     def onObjectCollision(self, object):
         """
         Upon collision with an Object, entities are moved towards the side of the bounding rect that they would have hit first.
         """
-        if self.velocity[0] < 0:
-            vxDiff = (object.position[0] + object.objectType.width) - self.position[0]
-        elif self.velocity[0] > 0:
-            vxDiff = object.position[0] - (self.position[0] + self.objectType.width)
+        if self.velocity.x < 0:
+            vxDiff = (object.position.x + object.objectType.width) - self.position.x
+        elif self.velocity.x > 0:
+            vxDiff = object.position.x - (self.position.x + self.objectType.width)
         else:
-            self.position[1] = (object.position[1] + object.objectType.height) if (self.velocity[1] < 0) else (object.position[1] - self.objectType.height)
+            self.position.y = (object.position.y - self.objectType.height) if (self.velocity.y > 0) else (object.position.y + object.objectType.height) 
                 
-            return Object.Bottom if self.velocity[1] < 0 else Object.Top
+            return Object.Bottom if self.velocity.y > 0 else Object.Top
 
-        if self.velocity[1] > 0:
-            vyDiff = object.position[1] - (self.position[1] + self.objectType.height)
-        elif self.velocity[1] < 0:
-            vyDiff = (object.position[1] + object.objectType.height) - self.position[1]
+        if self.velocity.y < 0:
+            vyDiff = (object.position.y + object.objectType.height) - self.position.y
+        elif self.velocity.y > 0:
+            vyDiff = object.position.y - (self.position.y + self.objectType.height)
         else:
-            self.position[0] += vxDiff
+            self.position.x += vxDiff
             return Object.Left if vxDiff > 0 else Object.Right
 
-        if (abs(vyDiff / self.velocity[1]) > abs(vxDiff / self.velocity[0])):
-            self.position = [self.position[0] + vxDiff, self.position[1]]
+        if (abs(vyDiff / self.velocity.y) > abs(vxDiff / self.velocity.x)):
+            self.position += Vector(vxDiff, 0)
             return Object.Left if vxDiff > 0 else Object.Right
                 
         else:
-            self.position = [self.position[0],self.position[1] + vyDiff]
+            self.position += Vector(0, vyDiff) 
             return Object.Bottom if vyDiff > 0 else Object.Top
 
     def colliding(self, isColliding, object):
@@ -71,7 +72,7 @@ class Entity(Object):
             if collisionType != Object.Bottom:
                 self.onLand()
 
-    def __init__(self, whichType, position = [0, 0], velocity = [0, 0], acceleration = [0, 0], flipped = False, projectile = False):
+    def __init__(self, whichType, position = None, velocity = None, acceleration = None, flipped = False, projectile = False):
         """
         Creates a basic Entity of a specific type.
         """
@@ -85,7 +86,11 @@ class Entity(Object):
 
         #Physics
         self.acceleration = acceleration
+        if acceleration == None:
+            self.acceleration = Vector()
         self.velocity = velocity
+        if velocity == None:
+            self.velocity = Vector()
         
         self.wallSliding = False
         self.slidingSide = None

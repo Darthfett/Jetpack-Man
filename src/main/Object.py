@@ -3,7 +3,8 @@ An Object is an object that is drawn to the screen.
 
 It can have animations, position, and size.
 """
-from Main.ObjectType import ObjectType
+from main.ObjectType import ObjectType
+from Vector import Vector
 import pygame
 
 class Object:
@@ -14,21 +15,21 @@ class Object:
     def detectCollision(self, object):
         if self == object:
             return False
-        selfMinX = self.position[0]
-        selfMinY = abs(self.position[1])
-        selfMaxX = self.position[0] + self.objectType.width
-        selfMaxY = abs(self.position[1] + self.objectType.height)
-        objectMinX = object.position[0]
-        objectMinY = abs(object.position[1])
-        objectMaxX = object.position[0] + object.objectType.width
-        objectMaxY = abs(object.position[1] + object.objectType.height)
+        selfMinX = self.position.x
+        selfMinY = self.position.y
+        selfMaxX = self.position.x + self.objectType.width
+        selfMaxY = self.position.y + self.objectType.height
+        objectMinX = object.position.x
+        objectMinY = object.position.y
+        objectMaxX = object.position.x + object.objectType.width
+        objectMaxY = object.position.y + object.objectType.height
         return not (selfMaxX <= objectMinX or selfMinX >= objectMaxX or selfMaxY <= objectMinY or selfMinY >= objectMaxY)
 
     def detectRectCollision(self,rect):
-        selfMinX = self.position[0]
-        selfMinY = abs(self.position[1])
-        selfMaxX = self.position[0] + self.objectType.width
-        selfMaxY = abs(self.position[1] + self.objectType.height)
+        selfMinX = self.position.x
+        selfMinY = self.position.y
+        selfMaxX = self.position.x + self.objectType.width
+        selfMaxY = self.position.y + self.objectType.height
         return not (selfMaxX <= rect.left or selfMinX >= rect.right or selfMaxY <= rect.top or selfMinY >= rect.bottom)
         
 
@@ -41,7 +42,7 @@ class Object:
 
         return self.currentAnimation.frame[0]
 
-    def __init__(self, whichType, position = [0, 0], flipped = False, draw = True):
+    def __init__(self, whichType, position = None, flipped = False, draw = True):
         """
         Creates a basic Entity of a specific type.
         """
@@ -49,6 +50,9 @@ class Object:
         Object.Objects.append(self)
         self.flipped = flipped
         self.position = position
+        if position == None:
+            self.position = Vector()
+        print "has position"
         self.draw = draw
 
         self.objectType = whichType

@@ -3,6 +3,7 @@ from Level import Level
 from Object import Object
 from ObjectType import ObjectType
 from Player import Player
+from Vector import Vector
 import os
 import pygame
 import math
@@ -32,9 +33,8 @@ class Game:
 
 
     #Physics
-    CollisionMap = []
     CollisionBlockSize = 1
-    Gravity = .5
+    Gravity = -.5
     maxSlideSpeed = 1
     
     def _getCurrentObjectFrame(self, object):
@@ -52,7 +52,7 @@ class Game:
         Draws the given object to the screen
         """
         if object.draw:
-            Game.Screen.blit(self._getCurrentObjectFrame(object), object.position)
+            Game.Screen.blit(self._getCurrentObjectFrame(object), (object.position.x, -object.position.y))
             
     def _clearScreen(self):
         """
@@ -98,18 +98,21 @@ class Game:
         self._handleInput()        
 
         for entity in Entity.Entities:
+            print "1",entity,entity.position,entity.velocity,entity.acceleration
         
             #Acceleration
-            entity.velocity[1] += Game.Gravity
+            entity.velocity.y += Game.Gravity
 
+            print "2",entity,entity.position,entity.velocity,entity.acceleration
             #Velocity
-            entity.velocity = [entity.velocity[i] + entity.acceleration[i] for i in range(len(entity.velocity))]
+            entity.velocity += entity.acceleration
 
+            print "3",entity,entity.position,entity.velocity,entity.acceleration
             #Position
-            entity.position = [entity.position[i] + entity.velocity[i] for i in range(len(entity.position))]
-            if (entity.position[1] > Game.ScreenHeight):
+            entity.position += entity.velocity
+            if (entity.position.y < 0):
                 entity.position = Game.currentLevel.start
-                entity.velocity[1] = 0
+                entity.velocity.y = 0
             
             entity.collideState = None
 
@@ -130,14 +133,14 @@ class Game:
                 continue
             
             if entity.collidingLeft or entity.collidingRight:
-                entity.velocity[0] = 0
+                entity.velocity.x = 0
             
             if entity.collidingTop or entity.collidingBottom:
-                entity.velocity[1] = 0
+                entity.velocity.y = 0
             
             if entity.wallSliding:
-                if entity.velocity[1] > Game.maxSlideSpeed:
-                    entity.velocity[1] = Game.maxSlideSpeed
+                if entity.velocity.y > Game.maxSlideSpeed:
+                    entity.velocity.y = Game.maxSlideSpeed
         #Animation
         for entity in Entity.Entities:
             entity.getNextFrame()
@@ -190,39 +193,17 @@ class Game:
         finally:
             pygame.quit()
 
-    def _mapObject(self, object):
-        """
-        Maps the given object into the Collision Map
-        """
-        firstRow = object.position[0] / Game.CollisionBlockSize
-        lastRow = int(math.ceil((object.position[0] + object.objectType.width) / Game.CollisionBlockSize))
-        firstCol = object.position[1] / Game.CollisionBlockSize
-        lastCol = int(math.ceil((abs(object.position[1]) + object.objectType.height) / Game.CollisionBlockSize))
-        for row in range(firstRow, lastRow):
-            for col in range(firstCol, lastCol):
-                Game.CollisionMap[row][col].add(object)
-
     def _initLevel(self):
-        Game.currentLevel = Level('default', ['objects.dat'])
-
-        columnCount = int(math.ceil(Game.currentLevel.rect.width / Game.CollisionBlockSize))
-        rowCount = int(math.ceil(Game.currentLevel.rect.height / Game.CollisionBlockSize))
-
-        for row in range(rowCount):
-            blocks = []
-            for col in range(columnCount):
-                blocks.append(set([]))
-            Game.CollisionMap.append(blocks)
+        Game.currentLevel = Level('default')
 
         Game.Player = Player(ObjectType.ObjectTypes['player'], flipped = False)
-        self._mapObject(Object(ObjectType.ObjectTypes['block'], position = (0, 512)))
-        self._mapObject(Object(ObjectType.ObjectTypes['block'], position = (150, 450)))
-        self._mapObject(Object(ObjectType.ObjectTypes['block'], position = (150, 450 - 88)))
-        self._mapObject(Object(ObjectType.ObjectTypes['block'], position = (150, 450 - 176)))
-        self._mapObject(Object(ObjectType.ObjectTypes['block'], position = (500, 300)))
-        self._mapObject(Object(ObjectType.ObjectTypes['block'], position = (600, 520)))
-        self._mapObject(Object(ObjectType.ObjectTypes['block'], position = (660,300)))
-        self._mapObject(Game.Player)
+        Object(ObjectType.ObjectTypes['block'], position = Vector(0, 512))
+        Object(ObjectType.ObjectTypes['block'], position = Vector(150, 450))
+        Object(ObjectType.ObjectTypes['block'], position = Vector(150, 450 - 88))
+        Object(ObjectType.ObjectTypes['block'], position = Vector(150, 450 - 176))
+        Object(ObjectType.ObjectTypes['block'], position = Vector(500, 300))
+        Object(ObjectType.ObjectTypes['block'], position = Vector(600, 520))
+        Object(ObjectType.ObjectTypes['block'], position = Vector(660,300))
         Game.Player.objectType.width -= 1
         Game.Player.objectType.height -= 2
 
@@ -255,7 +236,6 @@ class Game:
 
         print "DEBUG: Initializing Entities"
         ObjectType.initializeObjectTypes()
-        Game.CollisionBlockSize = min(Game.ScreenHeight, Game.ScreenWidth)
 
     def _initScreen(self):
         """

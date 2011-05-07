@@ -1,0 +1,5 @@
+ObjectType	__init__.py	/^class ObjectType:/
+__init__	__init__.py	/^    def __init__(/
+__init__	__init__.py	1
+addAnimation	__init__.py	/^    def addAnimation(/
+initializeObjectTypes	__init__.py	/^    def initializeObjectTypes(/

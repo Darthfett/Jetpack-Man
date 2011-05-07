@@ -6,7 +6,7 @@ The Player is the Entity that the player controls.
 
 from Entity import Entity
 from Object import Object
-from Main.ObjectType import ObjectType
+from main.ObjectType import ObjectType
 import Game
 
 class Player(Entity):
@@ -44,7 +44,7 @@ class Player(Entity):
         if self.isFiring:
             if self.fireDelay <= 0:
                 self.fireDelay = Player.FireDelay
-                projectile = Entity(ObjectType.ObjectTypes['laser'], position = [self.position[0] + (-5 if self.flipped else 5), self.position[1] + 5],velocity = [-15 if self.flipped else 15,0], acceleration = [0,-Game.Game.Gravity], projectile = True)
+                projectile = Entity(ObjectType.ObjectTypes['laser'], position = [self.position.x + (-5 if self.flipped else 5), self.position.y + 5],velocity = [-15 if self.flipped else 15,0], acceleration = [0,-Game.Game.Gravity], projectile = True)
 
     def flying(self, isFlying):
         """
@@ -55,24 +55,24 @@ class Player(Entity):
             if self.isFlying:
                 if self.flyCounter > Player.MaxFlyLength:
                     self.isFlying = False
-                    self.acceleration[1] += Player.FlyAcceleration
+                    self.acceleration.y += Player.FlyAcceleration
                 else:
                     if self.wallSliding:
                         self.isFlying = False
-                        self.acceleration[1] += Player.FlyAcceleration
+                        self.acceleration.y += Player.FlyAcceleration
                     else:
-                        self.flyCounter += 0.5 + abs(min(0, self.velocity[1] / 2))
+                        self.flyCounter += 0.5 + abs(min(0, self.velocity.y / 2))
             else:
                 if self.wallSliding:
                     pass
                 else:
                     if self.flyCounter <= Player.MaxFlyLength:
                         self.isFlying = True
-                        self.acceleration[1] -= Player.FlyAcceleration
+                        self.acceleration.y -= Player.FlyAcceleration
         else:
             if self.isFlying:
                 self.isFlying = False
-                self. acceleration[1] += Player.FlyAcceleration
+                self. acceleration.y += Player.FlyAcceleration
 
     def jumping(self, isJumping):
         """
@@ -81,25 +81,25 @@ class Player(Entity):
         
         if isJumping:
             if not self.isJumping:
-                if self.velocity[1] == 0:
+                if self.velocity.y == 0:
                     self.isJumping = True
-                    self.velocity[1] = -Player.JumpInitialVelocity
+                    self.velocity.y = Player.JumpInitialVelocity
                 elif self.wallSliding:
                     self.wallSliding = False
                     self.isJumping = True
-                    self.velocity[1] = -Player.JumpInitialVelocity
-                    self.velocity[0] += Player.WallJumpRepelSpeed if self.slidingSide == Object.Left else -Player.WallJumpRepelSpeed
+                    self.velocity.y = Player.JumpInitialVelocity
+                    self.velocity.x += Player.WallJumpRepelSpeed if self.slidingSide == Object.Left else -Player.WallJumpRepelSpeed
                         
             elif self.wallSliding:
                 self.wallSliding = False
                 self.isJumping = True
-                self.velocity[1] = -Player.JumpInitialVelocity
-                self.velocity[0] += Player.WallJumpRepelSpeed if self.slidingSide == Object.Left else -Player.WallJumpRepelSpeed
+                self.velocity.y = Player.JumpInitialVelocity
+                self.velocity.x += Player.WallJumpRepelSpeed if self.slidingSide == Object.Left else -Player.WallJumpRepelSpeed
                 
         elif not isJumping and self.isJumping:
             self.isJumping = False
-            if self.velocity[1] < 0 and not self.isFlying:
-                self.velocity[1] = 0
+            if self.velocity.y > 0 and not self.isFlying:
+                self.velocity.y = 0
 
     def running(self, toRight, isRunning):
         """
@@ -107,12 +107,12 @@ class Player(Entity):
         """
 
         if not isRunning:
-            if self.velocity[0] != 0 and abs(self.velocity[0]) < Player.HorizontalMoveSpeed:
-                self.velocity[0] = 0
-            elif self.velocity[0] >= Player.HorizontalMoveSpeed:
-                self.velocity[0] -= Player.HorizontalMoveSpeed
-            elif abs(self.velocity[0]) >= Player.HorizontalMoveSpeed:
-                self.velocity[0] += Player.HorizontalMoveSpeed
+            if self.velocity.x != 0 and abs(self.velocity.x) < Player.HorizontalMoveSpeed:
+                self.velocity.x = 0
+            elif self.velocity.x >= Player.HorizontalMoveSpeed:
+                self.velocity.x -= Player.HorizontalMoveSpeed
+            elif abs(self.velocity.x) >= Player.HorizontalMoveSpeed:
+                self.velocity.x += Player.HorizontalMoveSpeed
                 
             self.runState = None
             self.wallSliding = False
@@ -131,9 +131,9 @@ class Player(Entity):
             
             if not self.wallSliding:
                 if toRight:
-                    self.velocity[0] = min(self.velocity[0] + Player.HorizontalMoveSpeed, Player.MaxHorizontalMoveSpeed)
+                    self.velocity.x = min(self.velocity.x + Player.HorizontalMoveSpeed, Player.MaxHorizontalMoveSpeed)
                 else:
-                    self.velocity[0] = max(self.velocity[0] - Player.HorizontalMoveSpeed, -Player.MaxHorizontalMoveSpeed)
+                    self.velocity.x = max(self.velocity.x - Player.HorizontalMoveSpeed, -Player.MaxHorizontalMoveSpeed)
                     
             if self.collidingTop:
                 self.flipped = not toRight
@@ -153,7 +153,7 @@ class Player(Entity):
         self.isFlying = False
         self.flyCounter = 0
 
-    def __init__(self, whichType, position = [0, 0], flipped = False):
+    def __init__(self, whichType, position = None, flipped = False):
         Entity.__init__(self, whichType, position = position, flipped = flipped)
         
         #Collision

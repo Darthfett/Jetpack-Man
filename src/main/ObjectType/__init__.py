@@ -1,4 +1,4 @@
-from Main.Animation import Animation
+from main.Animation import Animation
 import os
 
 class ObjectType:

@@ -52,7 +52,6 @@ class Object:
         self.position = position
         if position == None:
             self.position = Vector()
-        print "has position"
         self.draw = draw
 
         self.objectType = whichType

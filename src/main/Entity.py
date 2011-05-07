@@ -46,10 +46,14 @@ class Entity(Object):
 
         if (abs(vyDiff / self.velocity.y) > abs(vxDiff / self.velocity.x)):
             self.position += Vector(vxDiff, 0)
+            if self.position == None:
+                print "error line 50"
             return Object.Left if vxDiff > 0 else Object.Right
                 
         else:
             self.position += Vector(0, vyDiff) 
+            if self.position == None:
+                print "error line 56"
             return Object.Bottom if vyDiff > 0 else Object.Top
 
     def colliding(self, isColliding, object):

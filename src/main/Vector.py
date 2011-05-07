@@ -11,16 +11,18 @@ class Vector:
     def __iadd__(self, vec):
         self.x += vec[0]
         self.y += vec[1]
+        return self
 
     def __isub__(self, vec):
         self.x -= vec[0]
         self.y -= vec[1]
+        return self
 
     def __len__(self):
         return 2
 
     def __str__(self):
-        return "(" + str(self.x) + ", " + str(self.y) + ")"
+        return "V:(" + str(self.x) + ", " + str(self.y) + ")"
 
     def __getitem__(self, item):
         if item == 0:

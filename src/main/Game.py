@@ -98,16 +98,13 @@ class Game:
         self._handleInput()        
 
         for entity in Entity.Entities:
-            print "1",entity,entity.position,entity.velocity,entity.acceleration
         
             #Acceleration
             entity.velocity.y += Game.Gravity
 
-            print "2",entity,entity.position,entity.velocity,entity.acceleration
             #Velocity
             entity.velocity += entity.acceleration
-
-            print "3",entity,entity.position,entity.velocity,entity.acceleration
+            
             #Position
             entity.position += entity.velocity
             if (entity.position.y < 0):
@@ -203,7 +200,7 @@ class Game:
         Object(ObjectType.ObjectTypes['block'], position = Vector(150, 450 - 176))
         Object(ObjectType.ObjectTypes['block'], position = Vector(500, 300))
         Object(ObjectType.ObjectTypes['block'], position = Vector(600, 520))
-        Object(ObjectType.ObjectTypes['block'], position = Vector(660,300))
+        Object(ObjectType.ObjectTypes['block'], position = Vector(660, 300))
         Game.Player.objectType.width -= 1
         Game.Player.objectType.height -= 2
 

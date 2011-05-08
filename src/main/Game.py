@@ -52,7 +52,7 @@ class Game:
         Draws the given object to the screen
         """
         if object.draw:
-            Game.Screen.blit(self._getCurrentObjectFrame(object), (object.position.x, -object.position.y))
+            Game.Screen.blit(self._getCurrentObjectFrame(object), (object.position.x, Game.ScreenHeight - (object.position.y + object.objectType.height)))
             
     def _clearScreen(self):
         """
@@ -108,7 +108,7 @@ class Game:
             #Position
             entity.position += entity.velocity
             if (entity.position.y < 0):
-                entity.position = Game.currentLevel.start
+                entity.position = Vector(20,Game.ScreenHeight)
                 entity.velocity.y = 0
             
             entity.collideState = None
@@ -136,8 +136,8 @@ class Game:
                 entity.velocity.y = 0
             
             if entity.wallSliding:
-                if entity.velocity.y > Game.maxSlideSpeed:
-                    entity.velocity.y = Game.maxSlideSpeed
+                if entity.velocity.y < -Game.maxSlideSpeed:
+                    entity.velocity.y = -Game.maxSlideSpeed
         #Animation
         for entity in Entity.Entities:
             entity.getNextFrame()
@@ -194,13 +194,13 @@ class Game:
         Game.currentLevel = Level('default')
 
         Game.Player = Player(ObjectType.ObjectTypes['player'], flipped = False)
-        Object(ObjectType.ObjectTypes['block'], position = Vector(0, 512))
-        Object(ObjectType.ObjectTypes['block'], position = Vector(150, 450))
-        Object(ObjectType.ObjectTypes['block'], position = Vector(150, 450 - 88))
-        Object(ObjectType.ObjectTypes['block'], position = Vector(150, 450 - 176))
-        Object(ObjectType.ObjectTypes['block'], position = Vector(500, 300))
-        Object(ObjectType.ObjectTypes['block'], position = Vector(600, 520))
-        Object(ObjectType.ObjectTypes['block'], position = Vector(660, 300))
+        Object(ObjectType.ObjectTypes['block'], position = Vector(0, Game.ScreenHeight - (512 + ObjectType.ObjectTypes['block'].height)))
+        Object(ObjectType.ObjectTypes['block'], position = Vector(150, Game.ScreenHeight - (450 + ObjectType.ObjectTypes['block'].height)))
+        Object(ObjectType.ObjectTypes['block'], position = Vector(150, Game.ScreenHeight - (450 - 88 + ObjectType.ObjectTypes['block'].height)))
+        Object(ObjectType.ObjectTypes['block'], position = Vector(150, Game.ScreenHeight - (450 - 176 + ObjectType.ObjectTypes['block'].height)))
+        Object(ObjectType.ObjectTypes['block'], position = Vector(500, Game.ScreenHeight - (300 + ObjectType.ObjectTypes['block'].height)))
+        Object(ObjectType.ObjectTypes['block'], position = Vector(600, Game.ScreenHeight - (520 + ObjectType.ObjectTypes['block'].height)))
+        Object(ObjectType.ObjectTypes['block'], position = Vector(660, Game.ScreenHeight - (300 + ObjectType.ObjectTypes['block'].height)))
         Game.Player.objectType.width -= 1
         Game.Player.objectType.height -= 2
 

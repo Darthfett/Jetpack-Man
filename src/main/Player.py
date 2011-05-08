@@ -45,7 +45,7 @@ class Player(Entity):
         if self.isFiring:
             if self.fireDelay <= 0:
                 self.fireDelay = Player.FireDelay
-                projectile = Entity(ObjectType.ObjectTypes['laser'], position = Vector(self.position.x + (-5 if self.flipped else 5), self.position.y + 5),velocity = Vector(-15 if self.flipped else 15,0), acceleration = Vector(0, Game.Game.Gravity), projectile = True)
+                projectile = Entity(ObjectType.ObjectTypes['laser'], position = Vector(self.position.x + (-5 if self.flipped else 5), self.position.y + 5),velocity = Vector(-15 if self.flipped else 15,0), acceleration = Vector(0, -Game.Game.Gravity), projectile = True)
 
     def flying(self, isFlying):
         """
@@ -56,24 +56,24 @@ class Player(Entity):
             if self.isFlying:
                 if self.flyCounter > Player.MaxFlyLength:
                     self.isFlying = False
-                    self.acceleration.y += Player.FlyAcceleration
+                    self.acceleration.y -= Player.FlyAcceleration
                 else:
                     if self.wallSliding:
                         self.isFlying = False
-                        self.acceleration.y += Player.FlyAcceleration
+                        self.acceleration.y -= Player.FlyAcceleration
                     else:
-                        self.flyCounter += 0.5 + abs(min(0, self.velocity.y / 2))
+                        self.flyCounter += 0.5 + abs(max(0, self.velocity.y / 2))
             else:
                 if self.wallSliding:
                     pass
                 else:
                     if self.flyCounter <= Player.MaxFlyLength:
                         self.isFlying = True
-                        self.acceleration.y -= Player.FlyAcceleration
+                        self.acceleration.y += Player.FlyAcceleration
         else:
             if self.isFlying:
                 self.isFlying = False
-                self. acceleration.y += Player.FlyAcceleration
+                self. acceleration.y -= Player.FlyAcceleration
 
     def jumping(self, isJumping):
         """

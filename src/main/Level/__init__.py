@@ -17,7 +17,7 @@ class Level:
         self.name = name
         self.start = start
         if start == None:
-            self.start = Vector(0,80)
+            self.start = Vector(0, 600)
         self.objects = objects
         self.rect = pygame.Rect((0,0),(width,height))
         print "start",start

@@ -20,4 +20,3 @@ class Level:
             self.start = Vector(0, 600)
         self.objects = objects
         self.rect = pygame.Rect((0,0),(width,height))
-        print "start",start

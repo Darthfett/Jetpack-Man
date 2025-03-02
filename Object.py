@@ -3,7 +3,7 @@ An Object is an object that is drawn to the screen.
 
 It can have animations, position, and size.
 """
-from main.ObjectType import ObjectType
+from ObjectType import ObjectType
 from Vector import Vector
 import pygame
 

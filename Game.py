@@ -41,7 +41,7 @@ class Game:
         """
         Calculates the frame of the current animation for the given object to play.
         """
-        object.currentFrame = object.currentAnimation.frame[(self.frameCount * object.currentAnimation.fps / Game.FPSLimit) % len(object.currentAnimation.frame)]
+        object.currentFrame = object.currentAnimation.frame[(self.frameCount * object.currentAnimation.fps // Game.FPSLimit) % len(object.currentAnimation.frame)]
         if object.flipped:
             object.currentFrame = pygame.transform.flip(object.currentFrame, 1, 0)
             
@@ -147,7 +147,7 @@ class Game:
         Quits the game (specifically when a user decides to)        
         """
 
-        print "User Quit"
+        print("User Quit")
         raise Exception("UserQuitException")
 
     def _handleEvents(self):
@@ -169,7 +169,7 @@ class Game:
         Handles keyboard/mouse events        
         """
 
-        print "DEBUG: Starting Game"
+        print("DEBUG: Starting Game")
         nextFrameTime = 0
         deltaFrameTime = 1000 / Game.FPSLimit
 
@@ -209,7 +209,7 @@ class Game:
         Sets up the controls for MoveLeft,MoveRight,Jump,Duck,Fly,Quit
         """
 
-        print "DEBUG: Initializing Controls"
+        print("DEBUG: Initializing Controls")
         Game.Controls[pygame.K_a] = Game.MoveLeft
         Game.Controls[pygame.K_d] = Game.MoveRight
         Game.Controls[pygame.K_w] = Game.Jump
@@ -231,7 +231,7 @@ class Game:
         Sets up the Objects and loads the Objects into memory.  Also creates the player.
         """
 
-        print "DEBUG: Initializing Entities"
+        print("DEBUG: Initializing Entities")
         ObjectType.initializeObjectTypes()
 
     def _initScreen(self):
@@ -239,7 +239,7 @@ class Game:
         Sets up the pygame screen.
         """
 
-        print "DEBUG: Initializing Screen"
+        print("DEBUG: Initializing Screen")
         os.environ['SDL_VIDEO_CENTERED'] = '1'
         Game.Screen = pygame.display.set_mode((Game.ScreenWidth, Game.ScreenHeight))
 
@@ -254,5 +254,5 @@ class Game:
         self._initControls()
         self._initLevel()
         self._start()
-        print "DEBUG: Initializing Game"
+        print("DEBUG: Initializing Game")
         pass

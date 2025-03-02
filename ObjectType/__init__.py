@@ -1,4 +1,4 @@
-from main.Animation import Animation
+from Animation import Animation
 import os
 
 class ObjectType:
@@ -47,7 +47,7 @@ class ObjectType:
             separate multiple images with a ','.
         """
         
-        print "Initializing Object Types"
+        print("Initializing Object Types")
         dir = os.path.dirname(__file__)
         for ObjectTypeName in os.listdir(dir):
             if (not os.path.isdir(os.path.join(dir, ObjectTypeName))):

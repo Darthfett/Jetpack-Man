@@ -3,7 +3,7 @@ A Level is (currently) a listing of objects throughout the level
 
 It should also define start position as well as level size
 """
-from main.Vector import Vector
+from Vector import Vector
 
 import os
 import pygame

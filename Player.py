@@ -6,7 +6,7 @@ The Player is the Entity that the player controls.
 
 from Entity import Entity
 from Object import Object
-from main.ObjectType import ObjectType
+from ObjectType import ObjectType
 from Vector import Vector
 import Game
 

@@ -23,3 +23,6 @@ class Animation:
         self.height = 0
         self.frame = []
         self.fps = fps
+
+    def __repr__(self):
+        return f"Animation(frames={len(self.frame)}, width={self.width}, height={self.height})"

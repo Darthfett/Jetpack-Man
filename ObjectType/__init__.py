@@ -81,4 +81,6 @@ class ObjectType:
             objectType = ObjectType(ObjectTypeName,idle)
             for animation in animations:
                 objectType.addAnimation(keys.pop(0), animation)
-            
+    
+    def __repr__(self):
+        return f"ObjectType(name={self.name}, width={self.width}, height={self.height}, animations={list(self.animations.keys())})"

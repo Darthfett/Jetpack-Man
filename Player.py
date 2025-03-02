@@ -145,6 +145,7 @@ class Player(Entity):
                 
             self.runState = Object.Right if toRight else Object.Left
 
+
     def onLand(self):
         """
         Called when the player lands on ground of some sort

@@ -148,14 +148,17 @@ class Game:
         """
 
         print("User Quit")
-        raise Exception("UserQuitException")
+        raise SystemExit("UserQuitException")
 
     def _handleEvents(self):
         """        
         Handles all keyboard events        
         """
 
-        pygame.event.pump()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self._quit()
+
         keyboardState = pygame.key.get_pressed()
         for key in Game.BoundControls:
             Game.ControlState[Game.Controls[key]] = keyboardState[key]
@@ -187,6 +190,8 @@ class Game:
                     nextFrameTime = currentTime + deltaFrameTime
 
                 pygame.time.delay(1)
+        except (KeyboardInterrupt, SystemExit):
+            print("DEBUG: Exiting Game")
         finally:
             pygame.quit()
 

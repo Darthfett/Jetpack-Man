@@ -23,6 +23,9 @@ class Vector:
 
     def __str__(self):
         return "V:(" + str(self.x) + ", " + str(self.y) + ")"
+    
+    def __repr__(self):
+        return f"Vector({self.x}, {self.y})"
 
     def __getitem__(self, item):
         if item == 0:

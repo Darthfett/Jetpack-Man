@@ -32,8 +32,7 @@ class Entity(Object):
         elif self.velocity.x > 0:
             vxDiff = object.position.x - (self.position.x + self.objectType.width)
         else:
-            self.position.y = (object.position.y - self.objectType.height) if (self.velocity.y > 0) else (object.position.y + object.objectType.height) 
-                
+            self.position.y = (object.position.y - self.objectType.height) if (self.velocity.y > 0) else (object.position.y + object.objectType.height)
             return Object.Bottom if self.velocity.y > 0 else Object.Top
 
         if self.velocity.y < 0:
@@ -44,13 +43,12 @@ class Entity(Object):
             self.position.x += vxDiff
             return Object.Left if vxDiff > 0 else Object.Right
 
-        if (abs(vyDiff / self.velocity.y) > abs(vxDiff / self.velocity.x)):
+        if abs(vyDiff) < abs(vxDiff):
+            self.position += Vector(0, vyDiff)
+            return Object.Bottom if vyDiff > 0 else Object.Top
+        else:
             self.position += Vector(vxDiff, 0)
             return Object.Left if vxDiff > 0 else Object.Right
-                
-        else:
-            self.position += Vector(0, vyDiff) 
-            return Object.Bottom if vyDiff > 0 else Object.Top
 
     def colliding(self, isColliding, object):
         if isColliding:

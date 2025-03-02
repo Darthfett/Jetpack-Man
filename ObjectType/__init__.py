@@ -1,5 +1,8 @@
-from Animation import Animation
+import logging
 import os
+
+
+from Animation import Animation
 
 class ObjectType:
     """
@@ -7,10 +10,10 @@ class ObjectType:
 
     e.g. all ObjectTypes have the same Animations.
     """
-    
+
     Height = 0
     Width = 0
-    
+
     ObjectTypes = {}
 
     def addAnimation(self, name, animation):
@@ -25,7 +28,7 @@ class ObjectType:
         """
         Defines a type of Object with a name and a default 'idle' animation.
         """
-        
+
         ObjectType.ObjectTypes[name] = self
         self.name = name
         #Data
@@ -37,17 +40,17 @@ class ObjectType:
 
     @staticmethod
     def initializeObjectTypes():
-        """
+        r"""
          parses through all subdirectories under 'src\Main\ObjectType\' to create the ObjectTypes and add their respective
             animations contained in the anim.dat file
-        
+
          anim.dat: comments start with a '#'.
             each non-commented line should start with the name of the animation.
             after the name, place a colon, then a relative path to the sprite image.
             separate multiple images with a ','.
         """
-        
-        print("Initializing Object Types")
+
+        logging.debug("Initializing Object Types")
         dir = os.path.dirname(__file__)
         for ObjectTypeName in os.listdir(dir):
             if (not os.path.isdir(os.path.join(dir, ObjectTypeName))):
@@ -81,6 +84,6 @@ class ObjectType:
             objectType = ObjectType(ObjectTypeName,idle)
             for animation in animations:
                 objectType.addAnimation(keys.pop(0), animation)
-    
+
     def __repr__(self):
         return f"ObjectType(name={self.name}, width={self.width}, height={self.height}, animations={list(self.animations.keys())})"

@@ -1,12 +1,16 @@
+
+import logging
+import math
+import os
+
+import pygame
+
 from Entity import Entity
 from Level import Level
 from Object import Object
 from ObjectType import ObjectType
 from Player import Player
 from Vector import Vector
-import os
-import pygame
-import math
 
 class Game:
 
@@ -36,7 +40,7 @@ class Game:
     CollisionBlockSize = 1
     Gravity = -.5
     maxSlideSpeed = 1
-    
+
     def _getCurrentObjectFrame(self, object):
         """
         Calculates the frame of the current animation for the given object to play.
@@ -44,7 +48,7 @@ class Game:
         object.currentFrame = object.currentAnimation.frame[(self.frameCount * object.currentAnimation.fps // Game.FPSLimit) % len(object.currentAnimation.frame)]
         if object.flipped:
             object.currentFrame = pygame.transform.flip(object.currentFrame, 1, 0)
-            
+
         return object.currentFrame
 
     def _drawObject(self, object):
@@ -53,13 +57,13 @@ class Game:
         """
         if object.draw:
             Game.Screen.blit(self._getCurrentObjectFrame(object), (object.position.x, Game.ScreenHeight - (object.position.y + object.objectType.height)))
-            
+
     def _clearScreen(self):
         """
         Clears the screen
         """
         Game.Screen.fill((0, 0, 0))
-        
+
 
     def _drawFrame(self):
         """
@@ -67,7 +71,7 @@ class Game:
         """
 
         self._clearScreen()
-        
+
         for object in Object.Objects:
             self._drawObject(object)
 
@@ -79,11 +83,11 @@ class Game:
 
     def _handleInput(self):
         """
-        
+
         Performs the Player's actions
         Actions are:
             MoveLeft, MoveRight, Jump, Duck, Fly, Fire.
-        
+
         """
 
         Game.Player.running(Game.ControlState[Game.MoveRight], not (Game.ControlState[Game.MoveRight] == Game.ControlState[Game.MoveLeft]))
@@ -95,46 +99,46 @@ class Game:
         """
         Computes the current frame of the game
         """
-        self._handleInput()        
+        self._handleInput()
 
         for entity in Entity.Entities:
-        
+
             #Acceleration
             entity.velocity.y += Game.Gravity
 
             #Velocity
             entity.velocity += entity.acceleration
-            
+
             #Position
             entity.position += entity.velocity
             if (entity.position.y < 0):
                 entity.position = Vector(20,Game.ScreenHeight)
                 entity.velocity.y = 0
-            
+
             entity.collideState = None
 
-        #Collision        
+        #Collision
         for entity in Entity.Entities:
             #Reset collision values
             entity.collidingLeft,entity.collidingRight,entity.collidingTop,entity.collidingBottom = [False]*4
-            
+
             for object in Object.Objects:
                 entity.colliding(entity.detectCollision(object), object)
-                
+
             if entity.projectile:
                 if not entity.detectRectCollision(Game.currentLevel.rect):
                     entity.destroy = True
-                
+
             if entity.destroy:
                 Entity.Entities.remove(entity)
                 continue
-            
+
             if entity.collidingLeft or entity.collidingRight:
                 entity.velocity.x = 0
-            
+
             if entity.collidingTop or entity.collidingBottom:
                 entity.velocity.y = 0
-            
+
             if entity.wallSliding:
                 if entity.velocity.y < -Game.maxSlideSpeed:
                     entity.velocity.y = -Game.maxSlideSpeed
@@ -144,15 +148,15 @@ class Game:
 
     def _quit(self):
         """
-        Quits the game (specifically when a user decides to)        
+        Quits the game (specifically when a user decides to)
         """
 
-        print("User Quit")
+        logging.debug("User Quit")
         raise SystemExit("UserQuitException")
 
     def _handleEvents(self):
-        """        
-        Handles all keyboard events        
+        """
+        Handles all keyboard events
         """
 
         for event in pygame.event.get():
@@ -169,10 +173,10 @@ class Game:
         """
         Starts the game
         Main loop
-        Handles keyboard/mouse events        
+        Handles keyboard/mouse events
         """
 
-        print("DEBUG: Starting Game")
+        logging.info("Starting Game")
         nextFrameTime = 0
         deltaFrameTime = 1000 / Game.FPSLimit
 
@@ -191,7 +195,7 @@ class Game:
 
                 pygame.time.delay(1)
         except (KeyboardInterrupt, SystemExit):
-            print("DEBUG: Exiting Game")
+            logging.debug("Exiting Game")
         finally:
             pygame.quit()
 
@@ -214,7 +218,7 @@ class Game:
         Sets up the controls for MoveLeft,MoveRight,Jump,Duck,Fly,Quit
         """
 
-        print("DEBUG: Initializing Controls")
+        logging.debug("Initializing Controls")
         Game.Controls[pygame.K_a] = Game.MoveLeft
         Game.Controls[pygame.K_d] = Game.MoveRight
         Game.Controls[pygame.K_w] = Game.Jump
@@ -236,7 +240,7 @@ class Game:
         Sets up the Objects and loads the Objects into memory.  Also creates the player.
         """
 
-        print("DEBUG: Initializing Entities")
+        logging.debug("Initializing Entities")
         ObjectType.initializeObjectTypes()
 
     def _initScreen(self):
@@ -244,7 +248,7 @@ class Game:
         Sets up the pygame screen.
         """
 
-        print("DEBUG: Initializing Screen")
+        logging.debug("Initializing Screen")
         os.environ['SDL_VIDEO_CENTERED'] = '1'
         Game.Screen = pygame.display.set_mode((Game.ScreenWidth, Game.ScreenHeight))
 
@@ -253,11 +257,10 @@ class Game:
         Initializes the game (doesn't do anything currently)
         """
 
+        logging.debug("Initializing Game")
         self.frameCount = 0
         self._initScreen()
         self._initObjects()
         self._initControls()
         self._initLevel()
         self._start()
-        print("DEBUG: Initializing Game")
-        pass
